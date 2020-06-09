@@ -1,5 +1,6 @@
 package com.parkit.parkingsystem;
 
+import com.parkit.parkingsystem.constants.DBConstants;
 import com.parkit.parkingsystem.constants.Fare;
 import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.model.ParkingSpot;
@@ -8,17 +9,24 @@ import com.parkit.parkingsystem.service.FareCalculatorService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 import java.time.LocalDateTime;
-import java.util.Date;
 
+@ExtendWith(MockitoExtension.class)
 public class FareCalculatorServiceTest {
 
 	private static FareCalculatorService fareCalculatorService;
 	private Ticket ticket;
 
+	
+	@Mock
+	DBConstants GET_EXISTING_VEHICLE;
+	
 	@BeforeAll
 	private static void setUp() {
 		fareCalculatorService = new FareCalculatorService();
@@ -175,5 +183,20 @@ public class FareCalculatorServiceTest {
 		// THEN
 		fareCalculatorService.calculateFare(ticket);
 		assertEquals(0, ticket.getPrice());
+	}
+
+	@Test
+	public void givenVehicleAlreadyUseService_WhenCalculatingFare_thenADiscountApplied() {
+		// GIVEN
+		LocalDateTime inTime = LocalDateTime.now().minusMinutes(60);
+		LocalDateTime outTime = LocalDateTime.now();
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
+		// WHEN
+		ticket.setInTime(inTime);
+		ticket.setOutTime(outTime);
+		ticket.setParkingSpot(parkingSpot);
+		// THEN
+		fareCalculatorService.calculateFare(ticket);
+		assertEquals(ticket.getPrice() * (95 / 100), Fare.CAR_RATE_PER_HOUR);
 	}
 }
