@@ -200,6 +200,6 @@ public class FareCalculatorServiceTest {
 		ticket.setParkingSpot(parkingSpot);
 		// THEN
 		fareCalculatorService.calculateFare(ticket, "ABCDE");
-		assertEquals(ticket.getPrice() * (95 / 100), Fare.CAR_RATE_PER_HOUR);
+		assertEquals((Fare.CAR_RATE_PER_HOUR * 95/100), ticket.getPrice());
 	}
 }
