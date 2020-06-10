@@ -15,6 +15,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
+
 import java.time.LocalDateTime;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,7 +50,7 @@ public class FareCalculatorServiceTest {
 		ticket.setOutTime(outTime);
 		ticket.setParkingSpot(parkingSpot);
 		// THEN
-		fareCalculatorService.calculateFare(ticket);
+		fareCalculatorService.calculateFare(ticket, "ABCDE");
 		assertEquals(ticket.getPrice(), Fare.CAR_RATE_PER_HOUR);
 	}
 
@@ -63,7 +65,7 @@ public class FareCalculatorServiceTest {
 		ticket.setOutTime(outTime);
 		ticket.setParkingSpot(parkingSpot);
 		// THEN
-		fareCalculatorService.calculateFare(ticket);
+		fareCalculatorService.calculateFare(ticket, "ABCDE");
 		assertEquals(ticket.getPrice(), Fare.BIKE_RATE_PER_HOUR);
 	}
 
@@ -78,7 +80,7 @@ public class FareCalculatorServiceTest {
 		ticket.setOutTime(outTime);
 		ticket.setParkingSpot(parkingSpot);
 		// THEN
-		assertThrows(NullPointerException.class, () -> fareCalculatorService.calculateFare(ticket));
+		assertThrows(NullPointerException.class, () -> fareCalculatorService.calculateFare(ticket, "ABCDE"));
 	}
 
 	@Test
@@ -92,7 +94,7 @@ public class FareCalculatorServiceTest {
 		ticket.setOutTime(outTime);
 		ticket.setParkingSpot(parkingSpot);
 		// THEN
-		assertThrows(IllegalArgumentException.class, () -> fareCalculatorService.calculateFare(ticket));
+		assertThrows(IllegalArgumentException.class, () -> fareCalculatorService.calculateFare(ticket, "ABCDE"));
 	}
 
 	@Test
@@ -106,7 +108,7 @@ public class FareCalculatorServiceTest {
 		ticket.setOutTime(outTime);
 		ticket.setParkingSpot(parkingSpot);
 		// THEN
-		fareCalculatorService.calculateFare(ticket);
+		fareCalculatorService.calculateFare(ticket, "ABCDE");
 		assertEquals((0.75 * Fare.BIKE_RATE_PER_HOUR), ticket.getPrice());
 	}
 
@@ -121,7 +123,7 @@ public class FareCalculatorServiceTest {
 		ticket.setOutTime(outTime);
 		ticket.setParkingSpot(parkingSpot);
 		// THEN
-		fareCalculatorService.calculateFare(ticket);
+		fareCalculatorService.calculateFare(ticket, "ABCDE");
 		assertEquals((0.75 * Fare.CAR_RATE_PER_HOUR), ticket.getPrice());
 	}
 
@@ -136,7 +138,7 @@ public class FareCalculatorServiceTest {
 		ticket.setOutTime(outTime);
 		ticket.setParkingSpot(parkingSpot);
 		// THEN
-		fareCalculatorService.calculateFare(ticket);
+		fareCalculatorService.calculateFare(ticket, "ABCDE");
 		assertEquals((24 * Fare.CAR_RATE_PER_HOUR), ticket.getPrice());
 	}
 
@@ -151,7 +153,7 @@ public class FareCalculatorServiceTest {
 		ticket.setOutTime(outTime);
 		ticket.setParkingSpot(parkingSpot);
 		// THEN
-		fareCalculatorService.calculateFare(ticket);
+		fareCalculatorService.calculateFare(ticket, "ABCDE");
 		assertEquals((24 * Fare.BIKE_RATE_PER_HOUR), ticket.getPrice());
 	}
 
@@ -166,7 +168,7 @@ public class FareCalculatorServiceTest {
 		ticket.setOutTime(outTime);
 		ticket.setParkingSpot(parkingSpot);
 		// THEN
-		fareCalculatorService.calculateFare(ticket);
+		fareCalculatorService.calculateFare(ticket, "ABCDE");
 		assertEquals(0, ticket.getPrice());
 	}
 
@@ -181,13 +183,14 @@ public class FareCalculatorServiceTest {
 		ticket.setOutTime(outTime);
 		ticket.setParkingSpot(parkingSpot);
 		// THEN
-		fareCalculatorService.calculateFare(ticket);
+		fareCalculatorService.calculateFare(ticket, "ABCDE");
 		assertEquals(0, ticket.getPrice());
 	}
 
 	@Test
 	public void givenVehicleAlreadyUseService_WhenCalculatingFare_thenADiscountApplied() {
 		// GIVEN
+		when(DBConstants.GET_EXISTING_VEHICLE).thenReturn("ABCDE");
 		LocalDateTime inTime = LocalDateTime.now().minusMinutes(60);
 		LocalDateTime outTime = LocalDateTime.now();
 		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
@@ -196,7 +199,7 @@ public class FareCalculatorServiceTest {
 		ticket.setOutTime(outTime);
 		ticket.setParkingSpot(parkingSpot);
 		// THEN
-		fareCalculatorService.calculateFare(ticket);
+		fareCalculatorService.calculateFare(ticket, "ABCDE");
 		assertEquals(ticket.getPrice() * (95 / 100), Fare.CAR_RATE_PER_HOUR);
 	}
 }
