@@ -11,9 +11,9 @@ import com.parkit.parkingsystem.constants.DBConstants;
 
 public class PromotionRecurringUser {
 	
-	Connection con = null;
-	boolean hasNext = false;
-	public DataBaseConfig dataBaseConfig = new DataBaseConfig();
+	private Connection con = null;
+	private boolean hasNext = false;
+	private DataBaseConfig dataBaseConfig = new DataBaseConfig();
 	private static final Logger logger = LogManager.getLogger("PromotionRecurringUser");
 
 	public boolean promotionRecurringUser(String vehicleRegNumber) {

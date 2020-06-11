@@ -9,7 +9,7 @@ import com.parkit.parkingsystem.model.Ticket;
 
 public class FareCalculatorService {
 
-	public PromotionRecurringUser getRecurringUser = new PromotionRecurringUser();
+	public PromotionRecurringUser promotionRecurringUser = new PromotionRecurringUser();
 	boolean hasNext = false;
 
 	public void calculateFare(Ticket ticket, String vehicleRegNumber) {
@@ -20,7 +20,7 @@ public class FareCalculatorService {
 		LocalDateTime inHour = ticket.getInTime();
 		LocalDateTime outHour = ticket.getOutTime();
 		double duration = ChronoUnit.MINUTES.between(inHour, outHour);
-		hasNext = getRecurringUser.promotionRecurringUser(vehicleRegNumber);
+		hasNext = promotionRecurringUser.promotionRecurringUser(vehicleRegNumber);
 		
 		if (duration <= 30) {
 			ticket.setPrice(0);

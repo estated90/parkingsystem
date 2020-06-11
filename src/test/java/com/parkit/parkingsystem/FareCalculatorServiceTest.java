@@ -25,12 +25,12 @@ public class FareCalculatorServiceTest {
 	private Ticket ticket;
 
 	@Mock
-	PromotionRecurringUser promotionRecurringUser;
+	private static PromotionRecurringUser promotionRecurringUser;
 
-	FareCalculatorService fareCalculatorService;
+	private static FareCalculatorService fareCalculatorService;
 
 	@BeforeAll
-	public void init() {
+	private static void init() {
 		fareCalculatorService = new FareCalculatorService();
 	}
 
@@ -190,7 +190,6 @@ public class FareCalculatorServiceTest {
 	@Test
 	public void givenVehicleAlreadyUseService_WhenCalculatingFare_thenADiscountApplied() {
 		// GIVEN
-		PromotionRecurringUser promotionRecurringUser = new PromotionRecurringUser();
 		when(promotionRecurringUser.promotionRecurringUser("ABCDE")).thenReturn(true);
 		LocalDateTime inTime = LocalDateTime.now().minusMinutes(60);
 		LocalDateTime outTime = LocalDateTime.now();
