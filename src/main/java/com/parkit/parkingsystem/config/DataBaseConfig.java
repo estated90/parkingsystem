@@ -8,9 +8,9 @@ import java.sql.*;
 public class DataBaseConfig {
 
 	private static final Logger logger = LogManager.getLogger("DataBaseConfig");
-	private String url = "jdbc:mysql://localhost:3306/prod";
-	private String user = "root";
-	private String passwd = "T&nedreP1990";
+	private static String url = "jdbc:mysql://localhost:3306/prod";
+	private static String user = "root";
+	private static String passwd = "T&nedreP1990";
 	private static Connection connect;
 
 	public Connection getConnection() throws ClassNotFoundException, SQLException {
@@ -30,6 +30,7 @@ public class DataBaseConfig {
 		if (con != null) {
 			try {
 				con.close();
+				connect = null;
 				logger.info("Closing DB connection");
 			} catch (SQLException e) {
 				logger.error("Error while closing connection", e);

@@ -31,9 +31,9 @@ public class ParkingSpotDAO {
             dataBaseConfig.closePreparedStatement(ps);
         }catch (Exception ex){
             logger.error("Error fetching next available slot",ex);
-        }finally {
-            dataBaseConfig.closeConnection(con);
-        }
+        }//finally {
+            //dataBaseConfig.closeConnection(con);
+        //}
         return result;
     }
 
@@ -51,9 +51,9 @@ public class ParkingSpotDAO {
         }catch (Exception ex){
             logger.error("Error updating parking info",ex);
             return false;
-        }finally {
-            dataBaseConfig.closeConnection(con);
-        }
+        }//finally {
+            //dataBaseConfig.closeConnection(con);
+        //}
     }
 
 }

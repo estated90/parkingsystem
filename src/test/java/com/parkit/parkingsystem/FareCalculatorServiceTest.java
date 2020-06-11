@@ -1,17 +1,17 @@
 package com.parkit.parkingsystem;
 
-import com.parkit.parkingsystem.constants.DBConstants;
 import com.parkit.parkingsystem.constants.Fare;
 import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.service.FareCalculatorService;
+import com.parkit.parkingsystem.service.PromotionRecurringUser;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,15 +22,15 @@ import java.time.LocalDateTime;
 @ExtendWith(MockitoExtension.class)
 public class FareCalculatorServiceTest {
 
-	private static FareCalculatorService fareCalculatorService;
 	private Ticket ticket;
 
-	
 	@Mock
-	DBConstants GET_EXISTING_VEHICLE;
-	
+	PromotionRecurringUser promotionRecurringUser;
+
+	FareCalculatorService fareCalculatorService;
+
 	@BeforeAll
-	private static void setUp() {
+	public void init() {
 		fareCalculatorService = new FareCalculatorService();
 	}
 
@@ -190,7 +190,8 @@ public class FareCalculatorServiceTest {
 	@Test
 	public void givenVehicleAlreadyUseService_WhenCalculatingFare_thenADiscountApplied() {
 		// GIVEN
-		when(DBConstants.GET_EXISTING_VEHICLE).thenReturn("ABCDE");
+		PromotionRecurringUser promotionRecurringUser = new PromotionRecurringUser();
+		when(promotionRecurringUser.promotionRecurringUser("ABCDE")).thenReturn(true);
 		LocalDateTime inTime = LocalDateTime.now().minusMinutes(60);
 		LocalDateTime outTime = LocalDateTime.now();
 		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
@@ -200,6 +201,6 @@ public class FareCalculatorServiceTest {
 		ticket.setParkingSpot(parkingSpot);
 		// THEN
 		fareCalculatorService.calculateFare(ticket, "ABCDE");
-		assertEquals((Fare.CAR_RATE_PER_HOUR * 95/100), ticket.getPrice());
+		assertEquals((Fare.CAR_RATE_PER_HOUR * 95 / 100), ticket.getPrice());
 	}
 }
