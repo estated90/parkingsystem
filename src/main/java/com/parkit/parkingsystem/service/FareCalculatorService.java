@@ -5,12 +5,13 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 import com.parkit.parkingsystem.constants.Fare;
+import com.parkit.parkingsystem.dao.PromotionRecurringUserDAO;
 import com.parkit.parkingsystem.model.Ticket;
 
 public class FareCalculatorService {
 
-	public PromotionRecurringUser promotionRecurringUser = new PromotionRecurringUser();
-	boolean hasNext = false;
+	private PromotionRecurringUserDAO promotionRecurringUser = new PromotionRecurringUserDAO();
+	int hasNext = 0;
 
 	public void calculateFare(Ticket ticket, String vehicleRegNumber) {
 
@@ -20,27 +21,30 @@ public class FareCalculatorService {
 		LocalDateTime inHour = ticket.getInTime();
 		LocalDateTime outHour = ticket.getOutTime();
 		double duration = ChronoUnit.MINUTES.between(inHour, outHour);
-		hasNext = promotionRecurringUser.promotionRecurringUser(vehicleRegNumber);
-		
 		if (duration <= 30) {
 			ticket.setPrice(0);
 		} else {
+			hasNext = promotionRecurringUser.promotionRecurringUser(vehicleRegNumber);
 			switch (ticket.getParkingSpot().getParkingType()) {
 			case CAR: {
 				double fareCarPerMinute = (Fare.CAR_RATE_PER_HOUR / 60);
-				if (hasNext) {
-					ticket.setPrice(duration * fareCarPerMinute * 0.95);
+				if (hasNext >= 1) {
+					double d = (double)Math.round(duration * fareCarPerMinute * 0.95 * 100)/100;
+					ticket.setPrice(d);
 				} else {
-					ticket.setPrice(duration * fareCarPerMinute);
+					double d = (double)Math.round(duration * fareCarPerMinute * 100)/100;
+					ticket.setPrice(d);
 				}
 				break;
 			}
 			case BIKE: {
 				double fareBikePerMinute = (Fare.BIKE_RATE_PER_HOUR / 60);
-				if (hasNext) {
-					ticket.setPrice(duration * fareBikePerMinute * 0.95);
+				if (hasNext >= 1) {
+					double d = (double)Math.round(duration * fareBikePerMinute * 0.95 * 100)/100;
+					ticket.setPrice(d);
 				} else {
-					ticket.setPrice(duration * fareBikePerMinute);
+					double d =(double)Math.round(duration * fareBikePerMinute * 100)/100;
+					ticket.setPrice(d);
 				}
 				break;
 			}
