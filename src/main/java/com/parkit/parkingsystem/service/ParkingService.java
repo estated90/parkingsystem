@@ -106,9 +106,9 @@ public class ParkingService {
 
 	public void processExitingVehicle() {
 		try {
-			String vehicleRegNumber = getVehichleRegNumber();
-			Ticket ticket = ticketDAO.getTicket(vehicleRegNumber);
-			LocalDateTime outTime = LocalDateTime.now();
+			String vehicleRegNumber = 	getVehichleRegNumber();
+			Ticket ticket = 			ticketDAO.getTicket(vehicleRegNumber);
+			LocalDateTime outTime = 	LocalDateTime.now();
 			ticket.setOutTime(outTime);
 			fareCalculatorService.calculateFare(ticket, vehicleRegNumber);
 			if (ticketDAO.updateTicket(ticket)) {
