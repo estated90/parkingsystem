@@ -4,6 +4,7 @@ import com.parkit.parkingsystem.dao.ParkingSpotDAO;
 import com.parkit.parkingsystem.dao.TicketDAO;
 import com.parkit.parkingsystem.integration.config.DataBaseTestConfig;
 import com.parkit.parkingsystem.integration.service.DataBasePrepareService;
+import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.service.ParkingService;
 import com.parkit.parkingsystem.util.InputReaderUtil;
 import org.junit.jupiter.api.AfterAll;
@@ -49,9 +50,14 @@ public class ParkingDataBaseIT {
 
     @Test
     public void testParkingACar(){
-        ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
-        parkingService.processIncomingVehicle();
+        //GIVEN
+    	ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+    	when(parkingService.getNextParkingNumberIfAvailable()).thenReturn("1");
+        parkingService.processIncomingVehicle(); 
         //TODO: check that a ticket is actually saved in DB and Parking table is updated with availability
+        //WHEN
+        
+        //THEN
     }
 
     @Test
