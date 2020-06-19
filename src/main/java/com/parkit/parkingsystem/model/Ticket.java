@@ -46,8 +46,8 @@ public class Ticket {
         return inTime;
     }
 
-    public void setInTime(LocalDateTime inTime2) {
-        this.inTime = inTime2;
+    public void setInTime(LocalDateTime inTime) {
+        this.inTime = inTime;
     }
 
     public LocalDateTime getOutTime() {
