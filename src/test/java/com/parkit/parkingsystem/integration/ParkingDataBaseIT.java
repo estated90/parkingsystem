@@ -1,5 +1,6 @@
 package com.parkit.parkingsystem.integration;
 
+import com.parkit.parkingsystem.constants.DBConstants;
 import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.dao.ParkingSpotDAO;
 import com.parkit.parkingsystem.dao.TicketDAO;
@@ -17,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -67,7 +69,7 @@ public class ParkingDataBaseIT {
 		parkingService.processIncomingVehicle();
 		// WHEN
 		ParkingType parkingType = ParkingType.CAR;
-		
+
 		// THEN
 		assertEquals(2, parkingSpotDAO.getNextAvailableSlot(parkingType));
 	}
@@ -94,6 +96,34 @@ public class ParkingDataBaseIT {
 		ParkingType parkingType = ParkingType.CAR;
 		// TODO: check that the fare generated and out time are populated correctly in
 		// the database
-		assertEquals(1,parkingSpotDAO.getNextAvailableSlot(parkingType));
+		assertEquals(1, parkingSpotDAO.getNextAvailableSlot(parkingType));
+	}
+
+	@Test
+	public void givenNewVihiculeInParking_whenEnteringAndConnectionFail_thenReturnError() {
+		ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+		parkingService.processIncomingVehicle();
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		parkingService.processIncomingVehicle();
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		parkingService.processIncomingVehicle();
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		parkingService.processIncomingVehicle();
+		assertThrows(Exception.class, () -> parkingService.processIncomingVehicle());
 	}
 }

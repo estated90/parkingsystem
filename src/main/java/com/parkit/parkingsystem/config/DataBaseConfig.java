@@ -10,7 +10,7 @@ public class DataBaseConfig {
 	private static final Logger logger = LogManager.getLogger("DataBaseConfig");
 	private static String url = "jdbc:mysql://localhost:3306/prod";
 	private static String user = "root";
-	private static String passwd = "T&nedreP1990";
+	private static String passwd = "rootroot";
 	private static Connection connect;
 
 	public Connection getConnection() throws ClassNotFoundException, SQLException {

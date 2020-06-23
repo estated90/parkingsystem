@@ -31,16 +31,16 @@ public class ParkingService {
 
 	public void processIncomingVehicle() {
 		try {
-			ParkingSpot parkingSpot = getNextParkingNumberIfAvailable();
+			ParkingSpot parkingSpot = 		getNextParkingNumberIfAvailable();
+			LocalDateTime inTime = 			LocalDateTime.now();
+			Ticket ticket = 				new Ticket();
+			String vehicleRegNumber = 		getVehichleRegNumber();
+			hasNext = 						promotionRecurringUser.promotionRecurringUser(vehicleRegNumber);
 			if (parkingSpot != null && parkingSpot.getId() > 0) {
-				String vehicleRegNumber = getVehichleRegNumber();
 				parkingSpot.setAvailable(false);
 				parkingSpotDAO.updateParking(parkingSpot);// allot this parking space and mark it's availability as false
-				LocalDateTime inTime = LocalDateTime.now();
-				Ticket ticket = new Ticket();
 				// ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
 				// ticket.setId(ticketID);
-				hasNext = promotionRecurringUser.promotionRecurringUser(vehicleRegNumber);
 				if (hasNext >= 1) {
 					System.out.println(
 							"Welcome back! As a recurring user of our parking lot, you'll benefit from a 5% discount.");
@@ -66,11 +66,11 @@ public class ParkingService {
 	}
 
 	public ParkingSpot getNextParkingNumberIfAvailable() {
-		int parkingNumber = 0;
-		ParkingSpot parkingSpot = null;
+		int parkingNumber = 		0;
+		ParkingSpot parkingSpot = 	null;
+		ParkingType parkingType = 	getVehichleType();
+		parkingNumber = 			parkingSpotDAO.getNextAvailableSlot(parkingType);
 		try {
-			ParkingType parkingType = getVehichleType();
-			parkingNumber = parkingSpotDAO.getNextAvailableSlot(parkingType);
 			if (parkingNumber > 0) {
 				parkingSpot = new ParkingSpot(parkingNumber, parkingType, true);
 			} else {
@@ -108,10 +108,10 @@ public class ParkingService {
 			String vehicleRegNumber = 	getVehichleRegNumber();
 			Ticket ticket = 			ticketDAO.getTicket(vehicleRegNumber);
 			LocalDateTime outTime = 	LocalDateTime.now();
+			ParkingSpot parkingSpot = 	ticket.getParkingSpot();
 			ticket.setOutTime(outTime);
 			fareCalculatorService.calculateFare(ticket, vehicleRegNumber);
 			if (ticketDAO.updateTicket(ticket)) {
-				ParkingSpot parkingSpot = ticket.getParkingSpot();
 				parkingSpot.setAvailable(true);
 				parkingSpotDAO.updateParking(parkingSpot);
 				System.out.println("Please pay the parking fare:" + ticket.getPrice());
