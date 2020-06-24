@@ -6,18 +6,18 @@ import org.apache.logging.log4j.Logger;
 import java.sql.*;
 
 public class DataBaseConfig {
-
 	private static final Logger logger = LogManager.getLogger("DataBaseConfig");
-	private static String url = "jdbc:mysql://localhost:3306/prod";
 	private static String user = "root";
 	private static String passwd = "rootroot";
 	private static Connection connect;
 
-	public Connection getConnection() throws ClassNotFoundException, SQLException {
+	public static Connection getConnection() throws ClassNotFoundException, SQLException {
 		Class.forName("com.mysql.cj.jdbc.Driver");
+		Url url = new Url();
+		String linkDB = url.getURL();
 		if (connect == null) {
 			try {
-				connect = DriverManager.getConnection(url, user, passwd);
+				connect = DriverManager.getConnection(linkDB, user, passwd);
 				logger.info("Create DB connection");
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -26,7 +26,7 @@ public class DataBaseConfig {
 		return connect;
 	}
 
-	public void closeConnection(Connection con) {
+	public static void closeConnection(Connection con) {
 		if (con != null) {
 			try {
 				con.close();

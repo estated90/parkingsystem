@@ -11,7 +11,7 @@ public class DataBasePrepareService {
     public void clearDataBaseEntries(){
         Connection connection = null;
         try{
-            connection = dataBaseTestConfig.getConnection();
+            connection = DataBaseTestConfig.getConnection();
 
             //set parking entries to available
             connection.prepareStatement("update parking set available = true").execute();
@@ -22,7 +22,7 @@ public class DataBasePrepareService {
         }catch(Exception e){
             e.printStackTrace();
         }finally {
-            dataBaseTestConfig.closeConnection(connection);
+            DataBaseTestConfig.closeConnection(connection);
         }
     }
 

@@ -20,7 +20,7 @@ public class PromotionRecurringUserDAO {
 
 	public int promotionRecurringUser(String vehicleRegNumber) {
 		try {
-			con = dataBaseConfig.getConnection();
+			con = DataBaseConfig.getConnection();
 			ps = con.prepareStatement(DBConstants.GET_EXISTING_VEHICLE);
 			ps.setString(1, vehicleRegNumber);
 			rs = ps.executeQuery();
@@ -33,7 +33,7 @@ public class PromotionRecurringUserDAO {
         }finally {
             dataBaseConfig.closeResultSet(rs);
             dataBaseConfig.closePreparedStatement(ps);
-            dataBaseConfig.closeConnection(con);
+            DataBaseConfig.closeConnection(con);
         }
 		return hasNext;
 	}
