@@ -24,7 +24,7 @@ public class ParkingSpotDAO {
 
         int result=-1;
         try {
-            con = dataBaseConfig.getConnection();
+            con = DataBaseConfig.getConnection();
             ps = con.prepareStatement(DBConstants.GET_NEXT_PARKING_SPOT);
             ps.setString(1, parkingType.toString());
             rs = ps.executeQuery();
@@ -36,15 +36,15 @@ public class ParkingSpotDAO {
         }finally {
             dataBaseConfig.closeResultSet(rs);
             dataBaseConfig.closePreparedStatement(ps);
-            dataBaseConfig.closeConnection(con);
+            DataBaseConfig.closeConnection(con);
         }
         return result;
     }
 
     public boolean updateParking(ParkingSpot parkingSpot){
-        //update the availability fo that parking slot
+        //update the availability for that parking slot
         try {
-            con = dataBaseConfig.getConnection();
+            con = DataBaseConfig.getConnection();
             ps = con.prepareStatement(DBConstants.UPDATE_PARKING_SPOT);
             ps.setBoolean(1, parkingSpot.isAvailable());
             ps.setInt(2, parkingSpot.getId());
@@ -55,7 +55,7 @@ public class ParkingSpotDAO {
             return false;
         }finally {
         	dataBaseConfig.closePreparedStatement(ps);
-            dataBaseConfig.closeConnection(con);
+            DataBaseConfig.closeConnection(con);
         }
     }
 

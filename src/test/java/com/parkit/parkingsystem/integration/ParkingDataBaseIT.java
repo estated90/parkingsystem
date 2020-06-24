@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.parkit.parkingsystem.config.DataBaseConfig;
 import com.parkit.parkingsystem.config.Url;
 import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.dao.ParkingSpotDAO;
@@ -40,19 +41,19 @@ public class ParkingDataBaseIT {
 
 	@BeforeAll
 	private static void setUp() throws Exception {
+		DataBaseConfig.isTest = false;
 		parkingSpotDAO = new ParkingSpotDAO();
 		parkingSpotDAO.dataBaseConfig = dataBaseTestConfig;
 		ticketDAO = new TicketDAO();
 		ticketDAO.dataBaseConfig = dataBaseTestConfig;
 		dataBasePrepareService = new DataBasePrepareService();
-	};
+	}
 
 	@BeforeEach
 	private void setUpPerTest() throws Exception {
-		when(url.getURL()).thenReturn("jdbc:mysql://localhost:3306/test");
 		when(inputReaderUtil.readSelection()).thenReturn(1);
 		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
-		dataBasePrepareService.clearDataBaseEntries();
+		//dataBasePrepareService.clearDataBaseEntries();
 	}
 	
 	@AfterEach

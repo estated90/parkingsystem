@@ -7,18 +7,25 @@ import java.sql.*;
 
 public class DataBaseConfig {
 	private static final Logger logger = LogManager.getLogger("DataBaseConfig");
+	private static String url = "jdbc:mysql://localhost:3306/prod";
+	private static String urlTest = "jdbc:mysql://localhost:3306/test";
 	private static String user = "root";
 	private static String passwd = "rootroot";
 	private static Connection connect;
+	public static boolean isTest = true;
 
 	public static Connection getConnection() throws ClassNotFoundException, SQLException {
 		Class.forName("com.mysql.cj.jdbc.Driver");
-		Url url = new Url();
-		String linkDB = url.getURL();
 		if (connect == null) {
 			try {
-				connect = DriverManager.getConnection(linkDB, user, passwd);
-				logger.info("Create DB connection");
+				if (isTest == true){
+					connect = DriverManager.getConnection(url, user, passwd);
+					logger.info("Create DB connection in prod");
+				} else {
+					connect = DriverManager.getConnection(urlTest, user, passwd);
+					logger.info("Create DB connection in Test");
+				}
+				
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
