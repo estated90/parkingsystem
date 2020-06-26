@@ -1,21 +1,18 @@
 package com.parkit.parkingsystem.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.parkit.parkingsystem.config.DataBaseConfig;
-import com.parkit.parkingsystem.config.Url;
 import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.dao.ParkingSpotDAO;
 import com.parkit.parkingsystem.dao.TicketDAO;
@@ -31,13 +28,10 @@ public class ParkingDataBaseIT {
 	private static DataBaseTestConfig dataBaseTestConfig = new DataBaseTestConfig();
 	private static ParkingSpotDAO parkingSpotDAO;
 	private static TicketDAO ticketDAO;
-	private static DataBasePrepareService dataBasePrepareService;
 	private static Ticket ticket;
 
 	@Mock
 	private static InputReaderUtil inputReaderUtil;
-	@Mock
-	private static Url url;
 
 	@BeforeAll
 	private static void setUp() throws Exception {
@@ -46,7 +40,7 @@ public class ParkingDataBaseIT {
 		parkingSpotDAO.dataBaseConfig = dataBaseTestConfig;
 		ticketDAO = new TicketDAO();
 		ticketDAO.dataBaseConfig = dataBaseTestConfig;
-		dataBasePrepareService = new DataBasePrepareService();
+		new DataBasePrepareService();
 	}
 
 	@BeforeEach
@@ -64,7 +58,8 @@ public class ParkingDataBaseIT {
 
 	@AfterAll
 	private static void tearDown() {
-
+		DataBasePrepareService clear = new DataBasePrepareService();
+		clear.clearDataBaseEntries();
 	}
 
 	@Test
@@ -113,36 +108,5 @@ public class ParkingDataBaseIT {
 		// TODO: check that the fare generated and out time are populated correctly in
 		// the database
 		assertEquals(1, parkingSpotDAO.getNextAvailableSlot(parkingType));
-	}
-
-	@Disabled
-	@Test
-	public void givenNewVihiculeInParking_whenEnteringAndConnectionFail_thenReturnError() {
-		ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
-		try {
-			when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		parkingService.processIncomingVehicle();
-		try {
-			when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEFG");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		parkingService.processIncomingVehicle();
-		try {
-			when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEFGH");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		parkingService.processIncomingVehicle();
-		try {
-			when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEFGHI");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		parkingService.processIncomingVehicle();
-		assertThrows(Exception.class, () -> parkingService.processIncomingVehicle());
 	}
 }
