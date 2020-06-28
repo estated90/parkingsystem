@@ -19,14 +19,13 @@ public class TicketDAO {
 	private Connection con = null;
 	private PreparedStatement ps = null;
 	private ResultSet rs = null;
-	public DataBaseConfig dataBaseConfig = new DataBaseConfig();
-
+	private DataBaseConfig dataBaseConfig = new DataBaseConfig();
+	
 	public boolean saveTicket(Ticket ticket) {
 		try {
 			con = DataBaseConfig.getConnection();
 			ps = con.prepareStatement(DBConstants.SAVE_TICKET);
 			// ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
-			// ps.setInt(1,ticket.getId());
 			ps.setInt(1, ticket.getParkingSpot().getId());
 			ps.setString(2, ticket.getVehicleRegNumber());
 			ps.setDouble(3, ticket.getPrice());
@@ -71,7 +70,6 @@ public class TicketDAO {
 	}
 
 	public boolean updateTicket(Ticket ticket) {
-		Connection con = null;
 		try {
 			con = DataBaseConfig.getConnection();
 			ps = con.prepareStatement(DBConstants.UPDATE_TICKET);
@@ -86,5 +84,9 @@ public class TicketDAO {
 			DataBaseConfig.closeConnection(con);
 		}
 		return false;
+	}
+
+	public void setDataBaseConfig(DataBaseConfig dataBaseConfig) {
+		this.dataBaseConfig = dataBaseConfig;
 	}
 }

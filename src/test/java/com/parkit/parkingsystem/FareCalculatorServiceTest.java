@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDateTime;
 
 @ExtendWith(MockitoExtension.class)
-public class FareCalculatorServiceTest {
+class FareCalculatorServiceTest {
 
 	private Ticket ticket;
 
@@ -42,7 +42,7 @@ public class FareCalculatorServiceTest {
 	}
 
 	@Test
-	public void givenCarStayForOneHour_whenCalculatingFare_thenFareEqualtoFareOneHour() {
+	void givenCarStayForOneHour_whenCalculatingFare_thenFareEqualtoFareOneHour() {
 		// GIVEN
 		when(promotionRecurringUser.promotionRecurringUser("ABCDE")).thenReturn(0);
 		LocalDateTime inTime = LocalDateTime.now().minusMinutes(60);
@@ -54,11 +54,11 @@ public class FareCalculatorServiceTest {
 		ticket.setParkingSpot(parkingSpot);
 		// THEN
 		fareCalculatorService.calculateFare(ticket, "ABCDE");
-		assertEquals(ticket.getPrice(), Fare.CAR_RATE_PER_HOUR);
+		assertEquals(Fare.CAR_RATE_PER_HOUR,ticket.getPrice());
 	}
 
 	@Test
-	public void givenBikeStayForOneHour_whenCalculatingFare_thenFareEqualtoFareOneHour() {
+	void givenBikeStayForOneHour_whenCalculatingFare_thenFareEqualtoFareOneHour() {
 		// GIVEN
 		when(promotionRecurringUser.promotionRecurringUser("ABCDE")).thenReturn(0);
 		LocalDateTime inTime = LocalDateTime.now().minusMinutes(60);
@@ -70,11 +70,11 @@ public class FareCalculatorServiceTest {
 		ticket.setParkingSpot(parkingSpot);
 		// THEN
 		fareCalculatorService.calculateFare(ticket, "ABCDE");
-		assertEquals(ticket.getPrice(), Fare.BIKE_RATE_PER_HOUR);
+		assertEquals(Fare.BIKE_RATE_PER_HOUR, ticket.getPrice());
 	}
 
 	@Test
-	public void givenNoTypeVehicle_whenCalculatingFare_thenReturnException() {
+	void givenNoTypeVehicle_whenCalculatingFare_thenReturnException() {
 		// GIVEN
 		when(promotionRecurringUser.promotionRecurringUser("ABCDE")).thenReturn(0);
 		LocalDateTime inTime = LocalDateTime.now().minusMinutes(60);
@@ -89,7 +89,7 @@ public class FareCalculatorServiceTest {
 	}
 
 	@Test
-	public void givenEntryAfterExit_whenCalculatingFare_thenReturnException() {
+	void givenEntryAfterExit_whenCalculatingFare_thenReturnException() {
 		// GIVEN
 		LocalDateTime inTime = LocalDateTime.now().plusMinutes(60);
 		LocalDateTime outTime = LocalDateTime.now();
@@ -103,7 +103,7 @@ public class FareCalculatorServiceTest {
 	}
 
 	@Test
-	public void givenBikeStayForLessThanOneHour_whenCalculatingFare_thenFareEqualtoThreeQuarterOfPrice() {
+	void givenBikeStayForLessThanOneHour_whenCalculatingFare_thenFareEqualtoThreeQuarterOfPrice() {
 		// GIVEN
 		when(promotionRecurringUser.promotionRecurringUser("ABCDE")).thenReturn(0);
 		LocalDateTime inTime = LocalDateTime.now().minusMinutes(45);
@@ -119,7 +119,7 @@ public class FareCalculatorServiceTest {
 	}
 
 	@Test
-	public void givenCarStayForLessThanOneHour_whenCalculatingFare_thenFareEqualtoThreeQuarterOfPrice() {
+	void givenCarStayForLessThanOneHour_whenCalculatingFare_thenFareEqualtoThreeQuarterOfPrice() {
 		// GIVEN
 		when(promotionRecurringUser.promotionRecurringUser("ABCDE")).thenReturn(0);
 		LocalDateTime inTime = LocalDateTime.now().minusMinutes(45);
@@ -136,7 +136,7 @@ public class FareCalculatorServiceTest {
 	}
 
 	@Test
-	public void givenCarStayForOneDay_whenCalculatingFare_thenFareEqualtoFullDayPrice() {
+	void givenCarStayForOneDay_whenCalculatingFare_thenFareEqualtoFullDayPrice() {
 		// GIVEN
 		when(promotionRecurringUser.promotionRecurringUser("ABCDE")).thenReturn(0);
 		LocalDateTime inTime = LocalDateTime.now();
@@ -152,7 +152,7 @@ public class FareCalculatorServiceTest {
 	}
 
 	@Test
-	public void givenBikeStayForOneDay_whenCalculatingFare_thenFareEqualtoFullDayPrice() {
+	void givenBikeStayForOneDay_whenCalculatingFare_thenFareEqualtoFullDayPrice() {
 		// GIVEN
 		when(promotionRecurringUser.promotionRecurringUser("ABCDE")).thenReturn(0);
 		LocalDateTime inTime = LocalDateTime.now();
@@ -168,7 +168,7 @@ public class FareCalculatorServiceTest {
 	}
 
 	@Test
-	public void givenCarStayForThirtyMinutes_whenCalculatingFare_thenFareEqualtoZero() {
+	void givenCarStayForThirtyMinutes_whenCalculatingFare_thenFareEqualtoZero() {
 		// GIVEN
 		LocalDateTime inTime = LocalDateTime.now();
 		LocalDateTime outTime = LocalDateTime.now().plusMinutes(30);
@@ -183,7 +183,7 @@ public class FareCalculatorServiceTest {
 	}
 
 	@Test
-	public void givenBikeStayForThirtyMinutes_whenCalculatingFare_thenFareEqualtoZero() {
+	void givenBikeStayForThirtyMinutes_whenCalculatingFare_thenFareEqualtoZero() {
 		// GIVEN
 		LocalDateTime inTime = LocalDateTime.now();
 		LocalDateTime outTime = LocalDateTime.now().plusMinutes(30);
@@ -198,7 +198,7 @@ public class FareCalculatorServiceTest {
 	}
 
 	@Test
-	public void givenCarAlreadyUseService_WhenCalculatingFare_thenADiscountApplied() {
+	void givenCarAlreadyUseService_WhenCalculatingFare_thenADiscountApplied() {
 		// GIVEN
 		when(promotionRecurringUser.promotionRecurringUser("ABCDE")).thenReturn(1);
 		LocalDateTime inTime = LocalDateTime.now().minusMinutes(60);
@@ -213,7 +213,7 @@ public class FareCalculatorServiceTest {
 		assertEquals(((double) Math.round(Fare.CAR_RATE_PER_HOUR * 0.95 * 100 ) / 100), ticket.getPrice());
 	}
 	@Test
-	public void givenBikeAlreadyUseService_WhenCalculatingFare_thenADiscountApplied() {
+	void givenBikeAlreadyUseService_WhenCalculatingFare_thenADiscountApplied() {
 		// GIVEN
 		when(promotionRecurringUser.promotionRecurringUser("ABCDE")).thenReturn(1);
 		LocalDateTime inTime = LocalDateTime.now().minusMinutes(60);

@@ -17,9 +17,9 @@ import com.parkit.parkingsystem.util.InputReaderUtil;
 
 class ParkingSpotDAOTest {
 
-	private static DataBaseTestConfig dataBaseTestConfig = new DataBaseTestConfig();
+	//private static DataBaseTestConfig dataBaseTestConfig = new DataBaseTestConfig();
 	private static ParkingSpotDAO parkingSpotDAO;
-	private static TicketDAO ticketDAO;
+	//private static TicketDAO ticketDAO;
 	private static DataBasePrepareService dataBasePrepareService;
 
 	@Mock
@@ -28,9 +28,9 @@ class ParkingSpotDAOTest {
 	@BeforeAll
 	private static void setUp() throws Exception {
 		parkingSpotDAO = new ParkingSpotDAO();
-		parkingSpotDAO.dataBaseConfig = dataBaseTestConfig;
-		ticketDAO = new TicketDAO();
-		ticketDAO.dataBaseConfig = dataBaseTestConfig;
+		//parkingSpotDAO.dataBaseConfig = dataBaseTestConfig;
+		//ticketDAO = new TicketDAO();
+		//ticketDAO.dataBaseConfig = dataBaseTestConfig;
 		dataBasePrepareService = new DataBasePrepareService();
 	}
 

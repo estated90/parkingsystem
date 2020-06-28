@@ -2,6 +2,9 @@ package com.parkit.parkingsystem.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
+import static org.awaitility.Awaitility.await;
+
+import java.util.concurrent.Callable;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -23,9 +26,9 @@ import com.parkit.parkingsystem.service.ParkingService;
 import com.parkit.parkingsystem.util.InputReaderUtil;
 
 @ExtendWith(MockitoExtension.class)
-public class ParkingDataBaseIT {
+class ParkingDataBaseIT {
 
-	private static DataBaseTestConfig dataBaseTestConfig = new DataBaseTestConfig();
+	//private static DataBaseTestConfig dataBaseTestConfig = new DataBaseTestConfig();
 	private static ParkingSpotDAO parkingSpotDAO;
 	private static TicketDAO ticketDAO;
 	private static Ticket ticket;
@@ -35,11 +38,11 @@ public class ParkingDataBaseIT {
 
 	@BeforeAll
 	private static void setUp() throws Exception {
-		DataBaseConfig.isTest = false;
+		DataBaseConfig.setTest(false);
 		parkingSpotDAO = new ParkingSpotDAO();
-		parkingSpotDAO.dataBaseConfig = dataBaseTestConfig;
+		parkingSpotDAO.setDataBaseConfig(new DataBaseTestConfig());
 		ticketDAO = new TicketDAO();
-		ticketDAO.dataBaseConfig = dataBaseTestConfig;
+		ticketDAO.setDataBaseConfig(new DataBaseTestConfig());
 		new DataBasePrepareService();
 	}
 
@@ -63,7 +66,7 @@ public class ParkingDataBaseIT {
 	}
 
 	@Test
-	public void givenParkingACar_whenIncommingVehicle_thenImmatriculationInDB() {
+	void givenParkingACar_whenIncommingVehicle_thenImmatriculationInDB() {
 		ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
 		parkingService.processIncomingVehicle();
 		ticket = ticketDAO.getTicket("ABCDEF");
@@ -71,7 +74,7 @@ public class ParkingDataBaseIT {
 	}
 
 	@Test
-	public void givenTheUpdateToDB_whenUserEnterTheParking_thenNextAvailableSpotIsAvailable() {
+	void givenTheUpdateToDB_whenUserEnterTheParking_thenNextAvailableSpotIsAvailable() {
 		// GIVEN
 		ParkingService parkingService = 	new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
 		ParkingType parkingType = 			ParkingType.CAR;
@@ -82,31 +85,21 @@ public class ParkingDataBaseIT {
 		// WHEN
 		parkingNumber = parkingSpotDAO.getNextAvailableSlot(parkingType);
 		// THEN
-		assertEquals(parkingNumberOrigin + 1, parkingNumber);
+		assertEquals(parkingNumberOrigin+1, parkingNumber);
 	}
 
 	@Test
-	public void givenVehicleExiting_whenExitConfirm_thenDBisupdatedWithOutTimeAndPrice() {
+	void givenVehicleExiting_whenExitConfirm_thenDBisupdatedWithOutTimeAndPrice() {
+		ParkingType parkingType = 		ParkingType.CAR;
 		ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
 		parkingService.processIncomingVehicle();
 		try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		parkingService.processExitingVehicle();
-		parkingService.processIncomingVehicle();
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		parkingService.processExitingVehicle();
-		ParkingType parkingType = ParkingType.CAR;
-		// TODO: check that the fare generated and out time are populated correctly in
-		// the database
 		assertEquals(1, parkingSpotDAO.getNextAvailableSlot(parkingType));
 	}
+
 }

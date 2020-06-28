@@ -11,23 +11,23 @@ import com.parkit.parkingsystem.constants.DBConstants;
 
 public class PromotionRecurringUserDAO {
 	
+	private DataBaseConfig dataBaseConfig = new DataBaseConfig();
+	private static final Logger logger = LogManager.getLogger("PromotionRecurringUser");
 	private Connection con = null;
 	private PreparedStatement ps = null;
 	private ResultSet rs = null;
 	private int hasNext = 0;
-	private DataBaseConfig dataBaseConfig = new DataBaseConfig();
-	private static final Logger logger = LogManager.getLogger("PromotionRecurringUser");
 
 	public int promotionRecurringUser(String vehicleRegNumber) {
 		try {
 			con = DataBaseConfig.getConnection();
-			ps = con.prepareStatement(DBConstants.GET_EXISTING_VEHICLE);
+			ps = con.prepareStatement(DBConstants.GET_EXISTING_VEHICLE, ResultSet.TYPE_SCROLL_SENSITIVE, 
+                    ResultSet.CONCUR_UPDATABLE);
 			ps.setString(1, vehicleRegNumber);
+			ps.setString(2, vehicleRegNumber);
 			rs = ps.executeQuery();
-			if (rs.first()) {
-				hasNext = rs.getInt("COUNT");
-			}
-			//hasNext = 
+			rs.first();
+			hasNext = rs.getInt("COUNT");
 		} catch (Exception ex) {
 			logger.error("Error fetching if historic exist", ex);
         }finally {

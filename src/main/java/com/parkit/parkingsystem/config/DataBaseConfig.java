@@ -12,38 +12,48 @@ import java.util.Properties;
 public class DataBaseConfig {
 	private static final Logger logger = LogManager.getLogger("DataBaseConfig");
 	private static Connection connect;
-	public static boolean isTest = true;
+	private static boolean isTest = true;
 
 	public static Connection getConnection() throws ClassNotFoundException, SQLException {
-
-		try (InputStream input = new FileInputStream("E:\\Documents\\GitHub\\parkingsystem\\src\\main\\resources\\config.properties")) {
+		String urlProd = null;
+		String urlTest = null;
+		String user = null;
+		String password = null;
+		String localDir = System.getProperty("user.dir");
+		try (InputStream input = new FileInputStream(localDir + "\\src\\main\\resources\\config.properties")) {
 			Properties prop = new Properties();
 			// load a properties file
 			prop.load(input);
 			// get the property value and print it out
-			String urlProd = prop.getProperty("db.urlProd");
-			String urlTest = prop.getProperty("db.urlTest");
-			String user = prop.getProperty("db.user");
-			String password = prop.getProperty("db.password");
-
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			if (connect == null) {
-				try {
-					if (isTest == true) {
-						connect = DriverManager.getConnection(urlProd, user, password);
-						logger.info("Create DB connection in prod");
-					} else {
-						connect = DriverManager.getConnection(urlTest, user, password);
-						logger.info("Create DB connection in Test");
-					}
-
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+			urlProd = prop.getProperty("db.urlProd");
+			urlTest = prop.getProperty("db.urlTest");
+			user = prop.getProperty("db.user");
+			password = prop.getProperty("db.password");
 		} catch (IOException ex) {
 			logger.error("The credential to access the DB were incorrect");
 		}
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		if (connect == null) {
+
+			if (isTest) {
+				try {
+					connect = DriverManager.getConnection(urlProd, user, password);
+					logger.info("Create DB connection in prod");
+				} catch (SQLException e) {
+					e.printStackTrace();
+					logger.info("Fail to connect to the DB");
+				}
+			} else {
+				try {
+					connect = DriverManager.getConnection(urlTest, user, password);
+					logger.info("Create DB connection in Test");
+				} catch (SQLException e) {
+					e.printStackTrace();
+					logger.info("Fail to connect to the DB of testing");
+				}
+			}
+		}
+
 		return connect;
 	}
 
@@ -79,5 +89,13 @@ public class DataBaseConfig {
 				logger.error("Error while closing result set", e);
 			}
 		}
+	}
+
+	public static boolean isTest() {
+		return isTest;
+	}
+
+	public static void setTest(boolean isTest) {
+		DataBaseConfig.isTest = isTest;
 	}
 }
