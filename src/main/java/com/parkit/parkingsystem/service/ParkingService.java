@@ -1,5 +1,6 @@
 package com.parkit.parkingsystem.service;
 
+import com.parkit.parkingsystem.config.ParkingSpotDAOException;
 import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.dao.ParkingSpotDAO;
 import com.parkit.parkingsystem.dao.PromotionRecurringUserDAO;
@@ -21,7 +22,6 @@ public class ParkingService {
 	private InputReaderUtil inputReaderUtil;
 	private ParkingSpotDAO parkingSpotDAO;
 	private TicketDAO ticketDAO;
-	private int hasNext = 0;
 
 	public ParkingService(InputReaderUtil inputReaderUtil, ParkingSpotDAO parkingSpotDAO, TicketDAO ticketDAO) {
 		this.inputReaderUtil = inputReaderUtil;
@@ -31,6 +31,7 @@ public class ParkingService {
 
 	public void processIncomingVehicle() {
 		try {
+			int hasNext = 					0;
 			ParkingSpot parkingSpot = 		getNextParkingNumberIfAvailable();
 			LocalDateTime inTime = 			LocalDateTime.now();
 			Ticket ticket = 				new Ticket();
@@ -68,7 +69,11 @@ public class ParkingService {
 		int parkingNumber = 		0;
 		ParkingSpot parkingSpot = 	null;
 		ParkingType parkingType = 	getVehichleType();
-		parkingNumber = 			parkingSpotDAO.getNextAvailableSlot(parkingType);
+		try {
+			parkingNumber = 			parkingSpotDAO.getNextAvailableSlot(parkingType);
+		} catch (ParkingSpotDAOException e1) {
+			e1.printStackTrace();
+		}
 		try {
 			if (parkingNumber > 0) {
 				parkingSpot = new ParkingSpot(parkingNumber, parkingType, true);

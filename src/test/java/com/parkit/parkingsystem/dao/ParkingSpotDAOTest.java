@@ -1,5 +1,6 @@
 package com.parkit.parkingsystem.dao;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.sql.Connection;
@@ -10,6 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+
+import com.parkit.parkingsystem.config.ParkingSpotDAOException;
 import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.integration.config.DataBaseTestConfig;
 import com.parkit.parkingsystem.integration.service.DataBasePrepareService;
@@ -47,7 +50,7 @@ class ParkingSpotDAOTest {
 	}
 	@Disabled
 	@Test
-	void givenTheNeedOfAParkingNumber_whenParkingIsFull_thenReturnError() {
+	void givenTheNeedOfAParkingNumber_whenParkingIsFull_thenReturnError() throws ParkingSpotDAOException {
 		Connection connection = null;
 		try {
 			connection = DataBaseTestConfig.getConnection();
@@ -58,8 +61,8 @@ class ParkingSpotDAOTest {
 		} finally {
 			DataBaseTestConfig.closeConnection(connection);
 		}
-		int test = parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR);
-		
+		int result = parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR);
+		assertEquals(0, result);
 	}
 
 }

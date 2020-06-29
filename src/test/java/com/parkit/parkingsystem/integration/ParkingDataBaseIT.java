@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.parkit.parkingsystem.config.DataBaseConfig;
+import com.parkit.parkingsystem.config.ParkingSpotDAOException;
 import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.dao.ParkingSpotDAO;
 import com.parkit.parkingsystem.dao.TicketDAO;
@@ -74,7 +75,7 @@ class ParkingDataBaseIT {
 	}
 
 	@Test
-	void givenTheUpdateToDB_whenUserEnterTheParking_thenNextAvailableSpotIsAvailable() {
+	void givenTheUpdateToDB_whenUserEnterTheParking_thenNextAvailableSpotIsAvailable() throws ParkingSpotDAOException {
 		// GIVEN
 		ParkingService parkingService = 	new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
 		ParkingType parkingType = 			ParkingType.CAR;
@@ -89,7 +90,7 @@ class ParkingDataBaseIT {
 	}
 
 	@Test
-	void givenVehicleExiting_whenExitConfirm_thenDBisupdatedWithOutTimeAndPrice() {
+	void givenVehicleExiting_whenExitConfirm_thenDBisupdatedWithOutTimeAndPrice() throws ParkingSpotDAOException {
 		ParkingType parkingType = 		ParkingType.CAR;
 		ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
 		parkingService.processIncomingVehicle();

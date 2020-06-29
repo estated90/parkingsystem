@@ -1,6 +1,7 @@
 package com.parkit.parkingsystem.dao;
 
 import com.parkit.parkingsystem.config.DataBaseConfig;
+import com.parkit.parkingsystem.config.ParkingSpotDAOException;
 import com.parkit.parkingsystem.constants.DBConstants;
 import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.model.ParkingSpot;
@@ -19,7 +20,7 @@ public class ParkingSpotDAO {
 	private PreparedStatement ps = null;
 	private ResultSet rs = null;
 
-	public int getNextAvailableSlot(ParkingType parkingType) {
+	public int getNextAvailableSlot(ParkingType parkingType) throws ParkingSpotDAOException {
 
 		int result = -1;
 		try {

@@ -76,7 +76,6 @@ class FareCalculatorServiceTest {
 	@Test
 	void givenNoTypeVehicle_whenCalculatingFare_thenReturnException() {
 		// GIVEN
-		when(promotionRecurringUser.promotionRecurringUser("ABCDE")).thenReturn(0);
 		LocalDateTime inTime = LocalDateTime.now().minusMinutes(60);
 		LocalDateTime outTime = LocalDateTime.now();
 		ParkingSpot parkingSpot = new ParkingSpot(1, null, false);
