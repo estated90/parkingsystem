@@ -1,11 +1,12 @@
 package com.parkit.parkingsystem.dao;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -46,23 +47,27 @@ class ParkingSpotDAOTest {
 
 	@AfterAll
 	private static void tearDown() {
-
+		DataBasePrepareService clear = new DataBasePrepareService();
+		clear.clearDataBaseEntries();
 	}
 	@Disabled
 	@Test
 	void givenTheNeedOfAParkingNumber_whenParkingIsFull_thenReturnError() throws ParkingSpotDAOException {
 		Connection connection = null;
+		
 		try {
 			connection = DataBaseTestConfig.getConnection();
 			// set parking entries to available
 			connection.prepareStatement("update parking set available = false").execute();
-		} catch (Exception e) {
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			DataBaseTestConfig.closeConnection(connection);
 		}
-		int result = parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR);
-		assertEquals(0, result);
+		Assertions.assertThrows(ParkingSpotDAOException.class, () -> {parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR);});
 	}
 
 }

@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class ParkingSpotDAO {
 	private static final Logger logger = LogManager.getLogger("ParkingSpotDAO");
@@ -28,11 +29,17 @@ public class ParkingSpotDAO {
 			ps = con.prepareStatement(DBConstants.GET_NEXT_PARKING_SPOT);
 			ps.setString(1, parkingType.toString());
 			rs = ps.executeQuery();
-			if (rs.next()) {
-				result = rs.getInt(1);
-			}
-		} catch (Exception ex) {
+				if (rs.next()) {
+					if (!rs.wasNull()) {
+						result = rs.getInt(1);
+					}else {
+						throw new ParkingSpotDAOException("Parking is full");
+					}
+				}
+		} catch (SQLException ex) {
 			logger.error("Error fetching next available slot", ex);
+		} catch (ClassNotFoundException e) {
+			logger.error("Cannot get the connection to the DB", e);
 		} finally {
 			dataBaseConfig.closeResultSet(rs);
 			dataBaseConfig.closePreparedStatement(ps);
@@ -50,13 +57,15 @@ public class ParkingSpotDAO {
 			ps.setInt(2, parkingSpot.getId());
 			int updateRowCount = ps.executeUpdate();
 			return (updateRowCount == 1);
-		} catch (Exception ex) {
+		} catch (SQLException ex) {
 			logger.error("Error updating parking info", ex);
-			return false;
+		} catch (ClassNotFoundException e) {
+			logger.error("Cannot get the connection to the DB", e);
 		} finally {
 			dataBaseConfig.closePreparedStatement(ps);
 			DataBaseConfig.closeConnection(con);
 		}
+		return false;
 	}
 
 	public void setDataBaseConfig(DataBaseConfig dataBaseConfig) {

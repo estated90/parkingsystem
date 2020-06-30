@@ -68,13 +68,9 @@ public class ParkingService {
 	public ParkingSpot getNextParkingNumberIfAvailable() {
 		int parkingNumber = 		0;
 		ParkingSpot parkingSpot = 	null;
+		try {
 		ParkingType parkingType = 	getVehichleType();
-		try {
-			parkingNumber = 			parkingSpotDAO.getNextAvailableSlot(parkingType);
-		} catch (ParkingSpotDAOException e1) {
-			e1.printStackTrace();
-		}
-		try {
+		parkingNumber = 			parkingSpotDAO.getNextAvailableSlot(parkingType);
 			if (parkingNumber > 0) {
 				parkingSpot = new ParkingSpot(parkingNumber, parkingType, true);
 			} else {
