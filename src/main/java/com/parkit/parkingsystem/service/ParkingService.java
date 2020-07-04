@@ -11,7 +11,9 @@ import com.parkit.parkingsystem.util.InputReaderUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.InputMismatchException;
 
 public class ParkingService {
 
@@ -60,7 +62,7 @@ public class ParkingService {
 		}
 	}
 
-	private String getVehichleRegNumber() throws Exception {
+	private String getVehichleRegNumber() throws IllegalArgumentException {
 		System.out.println("Please type the vehicle registration number and press enter key");
 		return inputReaderUtil.readVehicleRegistrationNumber();
 	}
@@ -74,12 +76,14 @@ public class ParkingService {
 			if (parkingNumber > 0) {
 				parkingSpot = new ParkingSpot(parkingNumber, parkingType, true);
 			} else {
-				throw new Exception("Error fetching parking number from DB. Parking slots might be full");
+				throw new SQLException("Error fetching parking number from DB. Parking slots might be full");
 			}
 		} catch (IllegalArgumentException ie) {
 			logger.error("Error parsing user input for type of vehicle", ie);
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			logger.error("Error fetching next available parking slot", e);
+		} catch (ParkingSpotDAOException e) {
+			logger.error("The parking is full", e);
 		}
 		return parkingSpot;
 	}
@@ -90,16 +94,13 @@ public class ParkingService {
 		System.out.println("2 BIKE");
 		int input = inputReaderUtil.readSelection();
 		switch (input) {
-		case 1: {
+		case 1: 
 			return ParkingType.CAR;
-		}
-		case 2: {
+		case 2: 
 			return ParkingType.BIKE;
-		}
-		default: {
+		default: 
 			System.out.println("Incorrect input provided");
 			throw new IllegalArgumentException("Entered input is invalid");
-		}
 		}
 	}
 

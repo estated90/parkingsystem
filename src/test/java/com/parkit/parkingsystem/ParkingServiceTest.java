@@ -1,5 +1,6 @@
 package com.parkit.parkingsystem;
 
+import com.parkit.parkingsystem.config.DataBaseConfig;
 import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.dao.ParkingSpotDAO;
 import com.parkit.parkingsystem.dao.TicketDAO;
@@ -10,13 +11,18 @@ import com.parkit.parkingsystem.util.InputReaderUtil;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,16 +60,22 @@ class ParkingServiceTest {
         }
     }
     
-    @AfterEach
-    void closeParkingSpot() {
-		ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
-		parkingService.processExitingVehicle();
-    }
-
     @Test
     void processExitingVehicleTest(){
         parkingService.processExitingVehicle();
         verify(parkingSpotDAO, Mockito.times(1)).updateParking(any(ParkingSpot.class));
     }
+    
+	@Test
+	void givenConnectionToDB_whenWrongPassword_thenReturnSQLError() {
+		String localDir = System.getProperty("user.dir");
+		DataBaseConfig.setPropertyFile(localDir + "\\src\\test\\resources\\config.properties");
+		Exception exception = assertThrows(Exception.class, () -> {
+			DataBaseConfig.getConnection();
+		});
+		String expectedMessage = "Unable to process incoming vehicle";
+		String actualMessage = exception.getMessage();
+		assertTrue(actualMessage.contains(expectedMessage));
+	}
 
 }

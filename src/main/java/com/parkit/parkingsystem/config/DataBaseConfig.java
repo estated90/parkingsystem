@@ -13,14 +13,20 @@ public class DataBaseConfig {
 	private static final Logger logger = LogManager.getLogger("DataBaseConfig");
 	private static Connection connect;
 	private static boolean isTest = true;
+	private static String localDir = System.getProperty("user.dir");
+	private static String propertyFile = localDir + "\\src\\main\\resources\\config.properties";
+
+	public static void setPropertyFile(String propertyFile) {
+		DataBaseConfig.propertyFile = propertyFile;
+	}
 
 	public static Connection getConnection() throws ClassNotFoundException, SQLException {
 		String urlProd = null;
 		String urlTest = null;
 		String user = null;
 		String password = null;
-		String localDir = System.getProperty("user.dir");
-		try (InputStream input = new FileInputStream(localDir + "\\src\\main\\resources\\config.properties")) {
+		
+		try (InputStream input = new FileInputStream(propertyFile)) {
 			Properties prop = new Properties();
 			// load a properties file
 			prop.load(input);
@@ -30,7 +36,7 @@ public class DataBaseConfig {
 			user = prop.getProperty("db.user");
 			password = prop.getProperty("db.password");
 		} catch (IOException ex) {
-			logger.error("The credential to access the DB were incorrect");
+			logger.error("The property file was not found");
 		}
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		if (connect == null) {
@@ -39,7 +45,7 @@ public class DataBaseConfig {
 				try {
 					connect = DriverManager.getConnection(urlProd, user, password);
 					logger.info("Create DB connection in prod");
-				} catch (SQLException e) {
+				} catch (SQLException  e) {
 					e.printStackTrace();
 					logger.info("Fail to connect to the DB");
 				}

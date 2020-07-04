@@ -22,14 +22,12 @@ public class FareCalculatorService {
 		double duration = ChronoUnit.MINUTES.between(inHour, outHour);
 		ParkingType vehicleType = ticket.getParkingSpot().getParkingType();
 		switch (vehicleType) {
-		case CAR: {
+		case CAR: 
 			calculateFareOfVehicle(ticket, vehicleRegNumber, vehicleType, duration);
 			break;
-		}
-		case BIKE: {
+		case BIKE: 
 			calculateFareOfVehicle(ticket, vehicleRegNumber, vehicleType, duration);
 			break;
-		}
 		default:
 			throw new IllegalArgumentException("Unkown Parking Type");
 		}
