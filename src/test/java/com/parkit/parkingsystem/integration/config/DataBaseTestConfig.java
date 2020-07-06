@@ -13,46 +13,56 @@ import java.util.Properties;
 public class DataBaseTestConfig extends DataBaseConfig {
 	private static final Logger logger = LogManager.getLogger("DataBaseConfig");
 	private static Connection connect;
-	public static boolean isTest = false;
+	private static String localDir = System.getProperty("user.dir");
+	private static String propertyFile = localDir + "\\src\\test\\resources\\config.properties";
 
-	public static Connection getConnection() throws ClassNotFoundException, SQLException {
+	public static void setPropertyFile(String propertyFile) {
+		DataBaseTestConfig.propertyFile = propertyFile;
+	}
 
-		try (InputStream input = new FileInputStream(
-				"E:\\Documents\\GitHub\\parkingsystem\\src\\main\\resources\\config.properties")) {
+	public Connection getConnection() throws ClassNotFoundException, SQLException {
+		String urlTest = null;
+		String user = null;
+		String password = null;
+		try (InputStream input = new FileInputStream(propertyFile)) {
 			Properties prop = new Properties();
-			// load a properties file
 			prop.load(input);
-			// get the property value and print it out
-			String urlProd = prop.getProperty("db.urlProd");
-			String urlTest = prop.getProperty("db.urlTest");
-			String user = prop.getProperty("db.user");
-			String password = prop.getProperty("db.password");
-
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			if (connect == null) {
-				try {
-					if (isTest == true) {
-						connect = DriverManager.getConnection(urlProd, user, password);
-						logger.info("Create DB connection in prod");
-					} else {
-						connect = DriverManager.getConnection(urlTest, user, password);
-						logger.info("Create DB connection in Test");
-					}
-
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+			urlTest = prop.getProperty("db.urlTest");
+			user = prop.getProperty("db.user");
+			password = prop.getProperty("db.password");
 		} catch (IOException ex) {
-			logger.error("The credential to access the DB were incorrect");
+			logger.error("The property file was not found");
+		}
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		if (connect == null) {
+			try {
+				connect = DriverManager.getConnection(urlTest, user, password);
+				logger.info("Create DB connection in prod");
+			} catch (SQLException e) {
+				e.printStackTrace();
+				logger.info("Fail to connect to the DB");
+			}
 		}
 		return connect;
+	}
+
+	public void closeConnection(Connection con) {
+		if (con != null) {
+			try {
+				con.close();
+				connect = null;
+				logger.info("Closing DB connection");
+			} catch (SQLException e) {
+				logger.error("Error while closing connection", e);
+			}
+		}
 	}
 
 	public void closePreparedStatement(PreparedStatement ps) {
 		if (ps != null) {
 			try {
 				ps.close();
+				ps = null;
 				logger.info("Closing Prepared Statement");
 			} catch (SQLException e) {
 				logger.error("Error while closing prepared statement", e);
@@ -64,6 +74,7 @@ public class DataBaseTestConfig extends DataBaseConfig {
 		if (rs != null) {
 			try {
 				rs.close();
+				rs = null;
 				logger.info("Closing Result Set");
 			} catch (SQLException e) {
 				logger.error("Error while closing result set", e);

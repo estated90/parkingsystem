@@ -2,24 +2,41 @@ package com.parkit.parkingsystem.config;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.sql.SQLException;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.mockito.Mock;
 
 import com.parkit.parkingsystem.constants.DBConstants;
+import com.parkit.parkingsystem.dao.ParkingSpotDAO;
+import com.parkit.parkingsystem.dao.TicketDAO;
+import com.parkit.parkingsystem.integration.config.DataBaseTestConfig;
+import com.parkit.parkingsystem.integration.service.DataBasePrepareService;
+import com.parkit.parkingsystem.service.FareCalculatorService;
+import com.parkit.parkingsystem.util.InputReaderUtil;
 
 @TestMethodOrder(OrderAnnotation.class)
 class DataBaseConfigTest {
 
 	private java.sql.Connection con = null;
+	private static DataBaseConfig dataBaseConfig = new DataBaseConfig();
+    @Mock
+	private static InputReaderUtil inputReaderUtil;
 
+	@BeforeAll
+	private static void setUp() throws Exception {
+        new DataBasePrepareService();
+        new FareCalculatorService();
+	}
+	
+	
 	@AfterEach
 	void tearDown() throws Exception {
 
@@ -29,7 +46,7 @@ class DataBaseConfigTest {
 	@Order(1)
 	void testGetConnection() {
 		try {
-			con = DataBaseConfig.getConnection();
+			con = dataBaseConfig.getConnection();
 			assertNotNull(con);
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
@@ -40,8 +57,8 @@ class DataBaseConfigTest {
 	@Order(2)
 	void testCloseConnection() {
 		try {
-			con = DataBaseConfig.getConnection();
-			DataBaseConfig.closeConnection(con);
+			con = dataBaseConfig.getConnection();
+			dataBaseConfig.closeConnection(con);
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
@@ -49,77 +66,4 @@ class DataBaseConfigTest {
 			con.prepareStatement(DBConstants.GET_NEXT_PARKING_SPOT);
 		});
 	}
-
-
-
-	@Test
-	void testClosePreparedStatement() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testCloseResultSet() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testObject() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testGetClass() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testHashCode() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testEquals() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testClone() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testToString() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testNotify() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testNotifyAll() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testWait() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testWaitLong() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testWaitLongInt() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testFinalize() {
-		fail("Not yet implemented");
-	}
-
 }

@@ -5,12 +5,9 @@ import java.time.temporal.ChronoUnit;
 
 import com.parkit.parkingsystem.constants.Fare;
 import com.parkit.parkingsystem.constants.ParkingType;
-import com.parkit.parkingsystem.dao.PromotionRecurringUserDAO;
 import com.parkit.parkingsystem.model.Ticket;
 
 public class FareCalculatorService {
-
-	private PromotionRecurringUserDAO promotionRecurringUser = new PromotionRecurringUserDAO();
 
 	public void calculateFare(Ticket ticket, String vehicleRegNumber) {
 
@@ -34,18 +31,16 @@ public class FareCalculatorService {
 	}
 
 	private void calculateFareOfVehicle(Ticket ticket, String vehicleRegNumber, ParkingType vehicleType, double duration) {
-		int hasNext = 0;
 		double fareInUse = 0;
 		if (duration <= 30) {
 			ticket.setPrice(0);
 		} else {
-			hasNext = promotionRecurringUser.promotionRecurringUser(vehicleRegNumber);
 			if (vehicleType == ParkingType.CAR) {
 				fareInUse = (Fare.CAR_RATE_PER_HOUR / 60);
 			} else {
 				fareInUse = (Fare.BIKE_RATE_PER_HOUR / 60);
 			}
-			if (hasNext >= 1) {
+			if (ticket.getIsRecurring()) {
 				double d = (double) Math.round(duration * fareInUse * 0.95 * 100) / 100;
 				ticket.setPrice(d);
 			} else {

@@ -15,27 +15,25 @@ import java.sql.SQLException;
 
 public class ParkingSpotDAO {
 	private static final Logger logger = LogManager.getLogger("ParkingSpotDAO");
-	private DataBaseConfig dataBaseConfig = new DataBaseConfig();
-
-	private Connection con = null;
-	private PreparedStatement ps = null;
-	private ResultSet rs = null;
+	public DataBaseConfig dataBaseConfig = new DataBaseConfig();
 
 	public int getNextAvailableSlot(ParkingType parkingType) throws ParkingSpotDAOException {
-
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
 		int result = -1;
 		try {
-			con = DataBaseConfig.getConnection();
+			con = dataBaseConfig.getConnection();
 			ps = con.prepareStatement(DBConstants.GET_NEXT_PARKING_SPOT);
 			ps.setString(1, parkingType.toString());
 			rs = ps.executeQuery();
-				if (rs.next()) {
-					if (!rs.wasNull()) {
-						result = rs.getInt(1);
-					}else {
-						throw new ParkingSpotDAOException("Parking is full");
-					}
+			if (rs.next()) {
+				if (!rs.wasNull()) {
+					result = rs.getInt(1);
+				} else {
+					throw new ParkingSpotDAOException("Parking is full");
 				}
+			}
 		} catch (SQLException ex) {
 			logger.error("Error fetching next available slot", ex);
 		} catch (ClassNotFoundException e) {
@@ -43,15 +41,16 @@ public class ParkingSpotDAO {
 		} finally {
 			dataBaseConfig.closeResultSet(rs);
 			dataBaseConfig.closePreparedStatement(ps);
-			DataBaseConfig.closeConnection(con);
+			dataBaseConfig.closeConnection(con);
 		}
 		return result;
 	}
 
 	public boolean updateParking(ParkingSpot parkingSpot) {
-		// update the availability for that parking slot
+		Connection con = null;
+		PreparedStatement ps = null;
 		try {
-			con = DataBaseConfig.getConnection();
+			con = dataBaseConfig.getConnection();
 			ps = con.prepareStatement(DBConstants.UPDATE_PARKING_SPOT);
 			ps.setBoolean(1, parkingSpot.isAvailable());
 			ps.setInt(2, parkingSpot.getId());
@@ -63,7 +62,7 @@ public class ParkingSpotDAO {
 			logger.error("Cannot get the connection to the DB", e);
 		} finally {
 			dataBaseConfig.closePreparedStatement(ps);
-			DataBaseConfig.closeConnection(con);
+			dataBaseConfig.closeConnection(con);
 		}
 		return false;
 	}

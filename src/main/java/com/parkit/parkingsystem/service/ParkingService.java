@@ -3,7 +3,6 @@ package com.parkit.parkingsystem.service;
 import com.parkit.parkingsystem.config.ParkingSpotDAOException;
 import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.dao.ParkingSpotDAO;
-import com.parkit.parkingsystem.dao.PromotionRecurringUserDAO;
 import com.parkit.parkingsystem.dao.TicketDAO;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
@@ -13,14 +12,13 @@ import org.apache.logging.log4j.Logger;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.InputMismatchException;
 
 public class ParkingService {
 
 	private static final Logger logger = LogManager.getLogger("ParkingService");
 
 	private static FareCalculatorService fareCalculatorService = new FareCalculatorService();
-	private PromotionRecurringUserDAO promotionRecurringUser = new PromotionRecurringUserDAO();
+	private TicketDAO promotionRecurringUser = new TicketDAO();
 	private InputReaderUtil inputReaderUtil;
 	private ParkingSpotDAO parkingSpotDAO;
 	private TicketDAO ticketDAO;
@@ -33,19 +31,20 @@ public class ParkingService {
 
 	public void processIncomingVehicle() {
 		try {
-			int hasNext = 					0;
 			ParkingSpot parkingSpot = 		getNextParkingNumberIfAvailable();
 			LocalDateTime inTime = 			LocalDateTime.now();
 			Ticket ticket = 				new Ticket();
 			String vehicleRegNumber = 		getVehichleRegNumber();
-			hasNext = 						promotionRecurringUser.promotionRecurringUser(vehicleRegNumber);
 			if (parkingSpot != null && parkingSpot.getId() > 0) {
 				parkingSpot.setAvailable(false);
 				parkingSpotDAO.updateParking(parkingSpot);// allot this parking space and mark it's availability as false
 				// ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
-				if (hasNext >= 1) {
+				if (ticketDAO.promotionRecurringUser(vehicleRegNumber)) {
 					System.out.println(
 							"Welcome back! As a recurring user of our parking lot, you'll benefit from a 5% discount.");
+					ticket.setIsRecurring(true);
+				}else {
+					ticket.setIsRecurring(false);
 				}
 				ticket.setParkingSpot(parkingSpot);
 				ticket.setVehicleRegNumber(vehicleRegNumber);

@@ -2,7 +2,7 @@ package com.parkit.parkingsystem;
 
 import com.parkit.parkingsystem.constants.Fare;
 import com.parkit.parkingsystem.constants.ParkingType;
-import com.parkit.parkingsystem.dao.PromotionRecurringUserDAO;
+import com.parkit.parkingsystem.dao.TicketDAO;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.service.FareCalculatorService;
@@ -26,7 +26,7 @@ class FareCalculatorServiceTest {
 	private Ticket ticket;
 
 	@Mock
-	private static PromotionRecurringUserDAO promotionRecurringUser;
+	private static TicketDAO promotionRecurringUser;
 	@InjectMocks
 	private static FareCalculatorService fareCalculatorService;
 
@@ -43,7 +43,6 @@ class FareCalculatorServiceTest {
 	@Test
 	void givenCarStayForOneHour_whenCalculatingFare_thenFareEqualtoFareOneHour() {
 		// GIVEN
-		when(promotionRecurringUser.promotionRecurringUser("ABCDE")).thenReturn(0);
 		LocalDateTime inTime = LocalDateTime.now().minusMinutes(60);
 		LocalDateTime outTime = LocalDateTime.now();
 		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
@@ -51,6 +50,7 @@ class FareCalculatorServiceTest {
 		ticket.setInTime(inTime);
 		ticket.setOutTime(outTime);
 		ticket.setParkingSpot(parkingSpot);
+		ticket.setIsRecurring(false);
 		// THEN
 		fareCalculatorService.calculateFare(ticket, "ABCDE");
 		assertEquals(Fare.CAR_RATE_PER_HOUR,ticket.getPrice());
@@ -59,7 +59,6 @@ class FareCalculatorServiceTest {
 	@Test
 	void givenBikeStayForOneHour_whenCalculatingFare_thenFareEqualtoFareOneHour() {
 		// GIVEN
-		when(promotionRecurringUser.promotionRecurringUser("ABCDE")).thenReturn(0);
 		LocalDateTime inTime = LocalDateTime.now().minusMinutes(60);
 		LocalDateTime outTime = LocalDateTime.now();
 		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.BIKE, false);
@@ -67,6 +66,7 @@ class FareCalculatorServiceTest {
 		ticket.setInTime(inTime);
 		ticket.setOutTime(outTime);
 		ticket.setParkingSpot(parkingSpot);
+		ticket.setIsRecurring(false);
 		// THEN
 		fareCalculatorService.calculateFare(ticket, "ABCDE");
 		assertEquals(Fare.BIKE_RATE_PER_HOUR, ticket.getPrice());
@@ -82,6 +82,7 @@ class FareCalculatorServiceTest {
 		ticket.setInTime(inTime);
 		ticket.setOutTime(outTime);
 		ticket.setParkingSpot(parkingSpot);
+		ticket.setIsRecurring(false);
 		// THEN
 		assertThrows(NullPointerException.class, () -> fareCalculatorService.calculateFare(ticket, "ABCDE"));
 	}
@@ -96,6 +97,7 @@ class FareCalculatorServiceTest {
 		ticket.setInTime(inTime);
 		ticket.setOutTime(outTime);
 		ticket.setParkingSpot(parkingSpot);
+		ticket.setIsRecurring(false);
 		// THEN
 		assertThrows(IllegalArgumentException.class, () -> fareCalculatorService.calculateFare(ticket, "ABCDE"));
 	}
@@ -103,7 +105,6 @@ class FareCalculatorServiceTest {
 	@Test
 	void givenBikeStayForLessThanOneHour_whenCalculatingFare_thenFareEqualtoThreeQuarterOfPrice() {
 		// GIVEN
-		when(promotionRecurringUser.promotionRecurringUser("ABCDE")).thenReturn(0);
 		LocalDateTime inTime = LocalDateTime.now().minusMinutes(45);
 		LocalDateTime outTime = LocalDateTime.now();
 		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.BIKE, false);
@@ -111,6 +112,7 @@ class FareCalculatorServiceTest {
 		ticket.setInTime(inTime);
 		ticket.setOutTime(outTime);
 		ticket.setParkingSpot(parkingSpot);
+		ticket.setIsRecurring(false);
 		// THEN
 		fareCalculatorService.calculateFare(ticket, "ABCDE");
 		assertEquals((0.75 * Fare.BIKE_RATE_PER_HOUR), ticket.getPrice());
@@ -119,7 +121,6 @@ class FareCalculatorServiceTest {
 	@Test
 	void givenCarStayForLessThanOneHour_whenCalculatingFare_thenFareEqualtoThreeQuarterOfPrice() {
 		// GIVEN
-		when(promotionRecurringUser.promotionRecurringUser("ABCDE")).thenReturn(0);
 		LocalDateTime inTime = LocalDateTime.now().minusMinutes(45);
 		LocalDateTime outTime = LocalDateTime.now();
 		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
@@ -127,6 +128,7 @@ class FareCalculatorServiceTest {
 		ticket.setInTime(inTime);
 		ticket.setOutTime(outTime);
 		ticket.setParkingSpot(parkingSpot);
+		ticket.setIsRecurring(false);
 		// THEN
 		fareCalculatorService.calculateFare(ticket, "ABCDE");
 		assertEquals(((double) Math.round(0.75 * Fare.CAR_RATE_PER_HOUR * 100) / 100), ticket.getPrice());
@@ -136,7 +138,6 @@ class FareCalculatorServiceTest {
 	@Test
 	void givenCarStayForOneDay_whenCalculatingFare_thenFareEqualtoFullDayPrice() {
 		// GIVEN
-		when(promotionRecurringUser.promotionRecurringUser("ABCDE")).thenReturn(0);
 		LocalDateTime inTime = LocalDateTime.now();
 		LocalDateTime outTime = LocalDateTime.now().plusDays(1);
 		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
@@ -144,6 +145,7 @@ class FareCalculatorServiceTest {
 		ticket.setInTime(inTime);
 		ticket.setOutTime(outTime);
 		ticket.setParkingSpot(parkingSpot);
+		ticket.setIsRecurring(false);
 		// THEN
 		fareCalculatorService.calculateFare(ticket, "ABCDE");
 		assertEquals((24 * Fare.CAR_RATE_PER_HOUR), ticket.getPrice());
@@ -152,7 +154,6 @@ class FareCalculatorServiceTest {
 	@Test
 	void givenBikeStayForOneDay_whenCalculatingFare_thenFareEqualtoFullDayPrice() {
 		// GIVEN
-		when(promotionRecurringUser.promotionRecurringUser("ABCDE")).thenReturn(0);
 		LocalDateTime inTime = LocalDateTime.now();
 		LocalDateTime outTime = LocalDateTime.now().plusDays(1);
 		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.BIKE, false);
@@ -160,6 +161,7 @@ class FareCalculatorServiceTest {
 		ticket.setInTime(inTime);
 		ticket.setOutTime(outTime);
 		ticket.setParkingSpot(parkingSpot);
+		ticket.setIsRecurring(false);
 		// THEN
 		fareCalculatorService.calculateFare(ticket, "ABCDE");
 		assertEquals((24 * Fare.BIKE_RATE_PER_HOUR), ticket.getPrice());
@@ -175,6 +177,7 @@ class FareCalculatorServiceTest {
 		ticket.setInTime(inTime);
 		ticket.setOutTime(outTime);
 		ticket.setParkingSpot(parkingSpot);
+		ticket.setIsRecurring(false);
 		// THEN
 		fareCalculatorService.calculateFare(ticket, "ABCDE");
 		assertEquals(0, ticket.getPrice());
@@ -190,6 +193,7 @@ class FareCalculatorServiceTest {
 		ticket.setInTime(inTime);
 		ticket.setOutTime(outTime);
 		ticket.setParkingSpot(parkingSpot);
+		ticket.setIsRecurring(false);
 		// THEN
 		fareCalculatorService.calculateFare(ticket, "ABCDE");
 		assertEquals(0, ticket.getPrice());
@@ -198,7 +202,6 @@ class FareCalculatorServiceTest {
 	@Test
 	void givenCarAlreadyUseService_WhenCalculatingFare_thenADiscountApplied() {
 		// GIVEN
-		when(promotionRecurringUser.promotionRecurringUser("ABCDE")).thenReturn(1);
 		LocalDateTime inTime = LocalDateTime.now().minusMinutes(60);
 		LocalDateTime outTime = LocalDateTime.now();
 		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
@@ -206,6 +209,7 @@ class FareCalculatorServiceTest {
 		ticket.setInTime(inTime);
 		ticket.setOutTime(outTime);
 		ticket.setParkingSpot(parkingSpot);
+		ticket.setIsRecurring(true);
 		// THEN
 		fareCalculatorService.calculateFare(ticket, "ABCDE");
 		assertEquals(((double) Math.round(Fare.CAR_RATE_PER_HOUR * 0.95 * 100 ) / 100), ticket.getPrice());
@@ -213,7 +217,6 @@ class FareCalculatorServiceTest {
 	@Test
 	void givenBikeAlreadyUseService_WhenCalculatingFare_thenADiscountApplied() {
 		// GIVEN
-		when(promotionRecurringUser.promotionRecurringUser("ABCDE")).thenReturn(1);
 		LocalDateTime inTime = LocalDateTime.now().minusMinutes(60);
 		LocalDateTime outTime = LocalDateTime.now();
 		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.BIKE, false);
@@ -221,6 +224,7 @@ class FareCalculatorServiceTest {
 		ticket.setInTime(inTime);
 		ticket.setOutTime(outTime);
 		ticket.setParkingSpot(parkingSpot);
+		ticket.setIsRecurring(true);
 		// THEN
 		fareCalculatorService.calculateFare(ticket, "ABCDE");
 		assertEquals(((double) Math.round(Fare.BIKE_RATE_PER_HOUR * 0.95 * 100 ) / 100), ticket.getPrice());

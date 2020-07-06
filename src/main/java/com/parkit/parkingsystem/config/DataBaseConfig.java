@@ -12,27 +12,18 @@ import java.util.Properties;
 public class DataBaseConfig {
 	private static final Logger logger = LogManager.getLogger("DataBaseConfig");
 	private static Connection connect;
-	private static boolean isTest = true;
 	private static String localDir = System.getProperty("user.dir");
 	private static String propertyFile = localDir + "\\src\\main\\resources\\config.properties";
 
-	public static void setPropertyFile(String propertyFile) {
-		DataBaseConfig.propertyFile = propertyFile;
-	}
-
-	public static Connection getConnection() throws ClassNotFoundException, SQLException {
+	public Connection getConnection() throws ClassNotFoundException, SQLException {
 		String urlProd = null;
-		String urlTest = null;
 		String user = null;
 		String password = null;
-		
+
 		try (InputStream input = new FileInputStream(propertyFile)) {
 			Properties prop = new Properties();
-			// load a properties file
 			prop.load(input);
-			// get the property value and print it out
 			urlProd = prop.getProperty("db.urlProd");
-			urlTest = prop.getProperty("db.urlTest");
 			user = prop.getProperty("db.user");
 			password = prop.getProperty("db.password");
 		} catch (IOException ex) {
@@ -40,30 +31,18 @@ public class DataBaseConfig {
 		}
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		if (connect == null) {
-
-			if (isTest) {
-				try {
-					connect = DriverManager.getConnection(urlProd, user, password);
-					logger.info("Create DB connection in prod");
-				} catch (SQLException  e) {
-					e.printStackTrace();
-					logger.info("Fail to connect to the DB");
-				}
-			} else {
-				try {
-					connect = DriverManager.getConnection(urlTest, user, password);
-					logger.info("Create DB connection in Test");
-				} catch (SQLException e) {
-					e.printStackTrace();
-					logger.info("Fail to connect to the DB of testing");
-				}
+			try {
+				connect = DriverManager.getConnection(urlProd, user, password);
+				logger.info("Create DB connection in prod");
+			} catch (SQLException e) {
+				e.printStackTrace();
+				logger.info("Fail to connect to the DB");
 			}
 		}
-
 		return connect;
 	}
 
-	public static void closeConnection(Connection con) {
+	public void closeConnection(Connection con) {
 		if (con != null) {
 			try {
 				con.close();
@@ -79,6 +58,7 @@ public class DataBaseConfig {
 		if (ps != null) {
 			try {
 				ps.close();
+				ps = null;
 				logger.info("Closing Prepared Statement");
 			} catch (SQLException e) {
 				logger.error("Error while closing prepared statement", e);
@@ -90,18 +70,11 @@ public class DataBaseConfig {
 		if (rs != null) {
 			try {
 				rs.close();
+				rs = null;
 				logger.info("Closing Result Set");
 			} catch (SQLException e) {
 				logger.error("Error while closing result set", e);
 			}
 		}
-	}
-
-	public static boolean isTest() {
-		return isTest;
-	}
-
-	public static void setTest(boolean isTest) {
-		DataBaseConfig.isTest = isTest;
 	}
 }
