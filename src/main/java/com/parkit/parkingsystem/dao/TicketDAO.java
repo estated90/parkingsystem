@@ -3,6 +3,7 @@ package com.parkit.parkingsystem.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import org.apache.logging.log4j.LogManager;
@@ -37,7 +38,7 @@ public class TicketDAO {
 			ps.setTimestamp(5, (ticket.getOutTime() == null) ? null : Timestamp.valueOf(ticket.getOutTime()));
 			ps.setBoolean(6, ticket.getIsRecurring());
 			return ps.execute();
-		} catch (Exception ex) {
+		} catch (SQLException | ClassNotFoundException ex) {
 			logger.error("Error fetching next available slot", ex);
 			return false;
 		} finally {
@@ -62,10 +63,10 @@ public class TicketDAO {
 				ticket.setVehicleRegNumber(vehicleRegNumber);
 				ticket.setPrice(rs.getDouble(3));
 				ticket.setInTime((rs.getTimestamp(4).toLocalDateTime()));
-				ticket.setOutTime(((ticket.getOutTime() == null) ? null : rs.getTimestamp(5).toLocalDateTime()));
+				ticket.setOutTime((rs.getTimestamp(5) == null) ? null : rs.getTimestamp(5).toLocalDateTime());
 				ticket.setIsRecurring(rs.getBoolean(6));
 			} else {
-				throw new Exception();
+				throw new SQLException();
 			}
 		} catch (Exception ex) {
 			logger.error("Error fetching next available slot", ex);
@@ -122,9 +123,6 @@ public class TicketDAO {
 
 	public boolean promotionRecurringUser(String vehicleRegNumber) {
 		boolean isRecurring = false;
-		Connection con = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
 		try {
 			con = dataBaseConfig.getConnection();
 			ps = con.prepareStatement(DBConstants.GET_EXISTING_VEHICLE, ResultSet.TYPE_SCROLL_SENSITIVE,

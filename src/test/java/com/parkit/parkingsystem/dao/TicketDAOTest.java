@@ -45,29 +45,29 @@ class TicketDAOTest {
 		LocalDateTime inTime = LocalDateTime.now(ZoneId.systemDefault());
 		ticket.setInTime(inTime);
 		boolean isFalse = ticketDAO.saveTicket(ticket);
-		assertEquals(isFalse, Boolean.FALSE);
+		assertEquals(Boolean.FALSE,isFalse);
 	}
 
 	@Test
-	public void givenSavingTicket_whenNoTicketProvided_thenReturnException() throws SQLException {
+	void givenSavingTicket_whenNoTicketProvided_thenReturnException() throws SQLException {
 		Ticket ticket = null;
 		assertThrows(NullPointerException.class, () -> ticketDAO.saveTicket(ticket));
 	}
 
 	@Test
-	public void givenNeedToUpdateTicket_whenInputingNewData_thenUpdateTicket()
+	void givenNeedToUpdateTicket_whenInputingNewData_thenUpdateTicket()
 			throws SQLException, ClassNotFoundException, IOException {
 		Ticket ticket = new Ticket();
 		ticket.setPrice(Fare.CAR_RATE_PER_HOUR);
 		LocalDateTime outTime = LocalDateTime.now(ZoneId.systemDefault());
 		ticket.setOutTime(outTime);
 		boolean isTrue = ticketDAO.updateTicket(ticket);
-		assertEquals(isTrue, Boolean.TRUE);
+		assertEquals(Boolean.TRUE,isTrue);
 
 	}
 
 	@Test
-	public void givenUpdatingTicket_whenNoTicketProvided_thenReturnException() throws SQLException {
+	void givenUpdatingTicket_whenNoTicketProvided_thenReturnException() throws SQLException {
 		Ticket ticket = null;
 		assertThrows(NullPointerException.class, () -> ticketDAO.updateTicket(ticket));
 	}

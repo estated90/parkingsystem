@@ -30,7 +30,7 @@ class ParkingSpotDAOTest {
 	@BeforeAll
 	private static void setUp() throws Exception {
 		parkingSpotDAO = new ParkingSpotDAO();
-        parkingSpotDAO.dataBaseConfig = dataBaseTestConfig;
+        parkingSpotDAO.setDataBaseConfig(dataBaseTestConfig);
 	}
 
 	@AfterAll
@@ -67,11 +67,11 @@ class ParkingSpotDAOTest {
 
 	@Test
 	@Order(3)
-	public void testUpdateParking() throws SQLException {
+	void testUpdateParking() throws SQLException {
 
 		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
 		boolean isTrue = parkingSpotDAO.updateParking(parkingSpot);
-		assertEquals(isTrue, Boolean.TRUE);
+		assertEquals(Boolean.TRUE, isTrue);
 
 	}
 

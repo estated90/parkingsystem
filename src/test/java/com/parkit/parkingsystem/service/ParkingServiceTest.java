@@ -1,4 +1,4 @@
-package com.parkit.parkingsystem;
+package com.parkit.parkingsystem.service;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -22,13 +22,13 @@ import com.parkit.parkingsystem.dao.ParkingSpotDAO;
 import com.parkit.parkingsystem.dao.TicketDAO;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
-import com.parkit.parkingsystem.service.ParkingService;
 import com.parkit.parkingsystem.util.InputReaderUtil;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class ParkingServiceTest {
 
+	@Mock
     private static ParkingService parkingService;
 
     @Mock
@@ -68,7 +68,7 @@ class ParkingServiceTest {
     }
     
     @Test
-    public void processIncomingVehicle() throws Exception{
+    void processIncomingVehicle() throws Exception{
         parkingService.processIncomingVehicle();
         verify(inputReaderUtil, Mockito.times(1)).readVehicleRegistrationNumber();
         verify(parkingSpotDAO, Mockito.times(1)).updateParking(any(ParkingSpot.class));

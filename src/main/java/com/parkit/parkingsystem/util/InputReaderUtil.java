@@ -1,10 +1,10 @@
 package com.parkit.parkingsystem.util;
 
+import java.io.IOException;
+import java.util.Scanner;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.InputMismatchException;
-import java.util.Scanner;
 
 public class InputReaderUtil {
 
@@ -21,14 +21,14 @@ public class InputReaderUtil {
         }
     }
 
-    public String readVehicleRegistrationNumber() throws InputMismatchException {
+    public String readVehicleRegistrationNumber() throws IOException {
         try {
             String vehicleRegNumber= scan.nextLine();
             if(vehicleRegNumber == null || vehicleRegNumber.trim().length()==0) {
-                throw new IllegalArgumentException("Invalid input provided");
+                throw new IOException("Invalid input provided");
             }
             return vehicleRegNumber;
-        }catch(InputMismatchException e){
+        }catch(IOException e){
             logger.error("Error while reading user input from Shell", e);
             System.out.println("Error reading input. Please enter a valid string for vehicle registration number");
             throw e;

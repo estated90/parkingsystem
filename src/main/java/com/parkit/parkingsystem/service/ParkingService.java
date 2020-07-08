@@ -10,6 +10,7 @@ import com.parkit.parkingsystem.util.InputReaderUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 
@@ -18,7 +19,6 @@ public class ParkingService {
 	private static final Logger logger = LogManager.getLogger("ParkingService");
 
 	private static FareCalculatorService fareCalculatorService = new FareCalculatorService();
-	private TicketDAO promotionRecurringUser = new TicketDAO();
 	private InputReaderUtil inputReaderUtil;
 	private ParkingSpotDAO parkingSpotDAO;
 	private TicketDAO ticketDAO;
@@ -61,7 +61,7 @@ public class ParkingService {
 		}
 	}
 
-	private String getVehichleRegNumber() throws IllegalArgumentException {
+	private String getVehichleRegNumber() throws IOException {
 		System.out.println("Please type the vehicle registration number and press enter key");
 		return inputReaderUtil.readVehicleRegistrationNumber();
 	}
@@ -110,7 +110,7 @@ public class ParkingService {
 			LocalDateTime outTime = 	LocalDateTime.now();
 			ParkingSpot parkingSpot = 	ticket.getParkingSpot();
 			ticket.setOutTime(outTime);
-			fareCalculatorService.calculateFare(ticket, vehicleRegNumber);
+			fareCalculatorService.calculateFare(ticket);
 			if (ticketDAO.updateTicket(ticket)) {
 				parkingSpot.setAvailable(true);
 				parkingSpotDAO.updateParking(parkingSpot);

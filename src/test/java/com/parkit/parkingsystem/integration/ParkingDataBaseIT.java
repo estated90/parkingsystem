@@ -3,6 +3,7 @@ package com.parkit.parkingsystem.integration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
@@ -80,7 +81,9 @@ class ParkingDataBaseIT {
 			ticketDAO.updateInTimeTicket(ticket);
 			parkingService.processExitingVehicle();
 			ticket = ticketDAO.getTicket("ABCDEF");
-			assertEquals(Fare.CAR_RATE_PER_HOUR, ticket.getPrice());
+			assertNotEquals(0, ticket.getPrice());
+			assertNotNull(ticket.getInTime());
+			assertNotNull(ticket.getOutTime());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -98,8 +101,9 @@ class ParkingDataBaseIT {
 			ticketDAO.updateInTimeTicket(ticket2);
 			ticket2.setOutTime(timeInUse2.plusHours(1));
 			ticketDAO.updateTicket(ticket2);
-			fareCalculatorService.calculateFare(ticket2, "ABCDEF");
+			fareCalculatorService.calculateFare(ticket2);
 			ticketDAO.updateTicket(ticket2);
+			assertTrue(ticket2.getIsRecurring());
 			assertEquals(((double) Math.round(Fare.CAR_RATE_PER_HOUR * 0.95 * 100) / 100), ticket2.getPrice());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -121,6 +125,4 @@ class ParkingDataBaseIT {
 		// THEN
 		assertEquals(parkingNumberOrigin + 1, parkingNumber);
 	}
-	}
-
 }

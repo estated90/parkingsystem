@@ -11,7 +11,7 @@ import java.util.Properties;
 
 public class DataBaseConfig {
 	private static final Logger logger = LogManager.getLogger("DataBaseConfig");
-	private static Connection connect;
+	private Connection connect;
 	private static String localDir = System.getProperty("user.dir");
 	private static String propertyFile = localDir + "\\src\\main\\resources\\config.properties";
 
@@ -35,7 +35,6 @@ public class DataBaseConfig {
 				connect = DriverManager.getConnection(urlProd, user, password);
 				logger.info("Create DB connection in prod");
 			} catch (SQLException e) {
-				e.printStackTrace();
 				logger.info("Fail to connect to the DB");
 			}
 		}
@@ -58,7 +57,6 @@ public class DataBaseConfig {
 		if (ps != null) {
 			try {
 				ps.close();
-				ps = null;
 				logger.info("Closing Prepared Statement");
 			} catch (SQLException e) {
 				logger.error("Error while closing prepared statement", e);
@@ -70,7 +68,6 @@ public class DataBaseConfig {
 		if (rs != null) {
 			try {
 				rs.close();
-				rs = null;
 				logger.info("Closing Result Set");
 			} catch (SQLException e) {
 				logger.error("Error while closing result set", e);

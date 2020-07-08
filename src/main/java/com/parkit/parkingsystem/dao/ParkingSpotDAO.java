@@ -15,7 +15,7 @@ import java.sql.SQLException;
 
 public class ParkingSpotDAO {
 	private static final Logger logger = LogManager.getLogger("ParkingSpotDAO");
-	public DataBaseConfig dataBaseConfig = new DataBaseConfig();
+	private DataBaseConfig dataBaseConfig = new DataBaseConfig();
 
 	public int getNextAvailableSlot(ParkingType parkingType) throws ParkingSpotDAOException {
 		Connection con = null;
@@ -47,6 +47,9 @@ public class ParkingSpotDAO {
 	}
 
 	public boolean updateParking(ParkingSpot parkingSpot) {
+		if (parkingSpot == null) {
+			throw new NullPointerException("invalid request");
+		}
 		Connection con = null;
 		PreparedStatement ps = null;
 		try {
@@ -56,15 +59,14 @@ public class ParkingSpotDAO {
 			ps.setInt(2, parkingSpot.getId());
 			int updateRowCount = ps.executeUpdate();
 			return (updateRowCount == 1);
-		} catch (SQLException ex) {
+		} catch (SQLException | ClassNotFoundException ex ) {
 			logger.error("Error updating parking info", ex);
-		} catch (ClassNotFoundException e) {
-			logger.error("Cannot get the connection to the DB", e);
+			return false;
 		} finally {
 			dataBaseConfig.closePreparedStatement(ps);
 			dataBaseConfig.closeConnection(con);
 		}
-		return false;
+		
 	}
 
 	public void setDataBaseConfig(DataBaseConfig dataBaseConfig) {
