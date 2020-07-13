@@ -1,19 +1,16 @@
 package com.parkit.parkingsystem.service;
 
+import static org.easymock.EasyMock.expect;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.sql.DriverManager;
+import static org.powermock.api.easymock.PowerMock.mockStatic;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -22,12 +19,10 @@ import com.parkit.parkingsystem.dao.TicketDAO;
 import com.parkit.parkingsystem.util.InputReaderUtil;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(DriverManager.class)
-@ExtendWith(MockitoExtension.class)
+@PrepareForTest(InteractiveShell.class)
 class InteractiveShellTest {
-	
-	@Mock
-	InteractiveShell interactiveShell;
+
+	private static InteractiveShell instance;
 	@Mock
 	private static ParkingService parkingService;
 	@Mock
@@ -37,21 +32,24 @@ class InteractiveShellTest {
 	@Mock
 	private static TicketDAO ticketDAO;
 
-	@BeforeEach
-	void setUpPerTest() {
-		when(inputReaderUtil.readSelection()).thenReturn(1);
-		
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
+		instance = new InteractiveShell();
 		parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+	}
+
+	@BeforeEach
+	void setUp() throws Exception {
 	}
 
 	@AfterEach
 	void tearDown() throws Exception {
 	}
-	@Disabled
+
 	@Test
-	void testLoadInterface() throws Exception {
-		when(inputReaderUtil.readSelection()).thenReturn(1);
-		InteractiveShell.loadInterface();
+	void test() {
+		mockStatic(InputReaderUtil.class);
+		expect(inputReaderUtil.readSelection()).andReturn(1);
 		verify(parkingService, Mockito.times(1)).processIncomingVehicle();
 	}
 

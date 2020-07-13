@@ -225,4 +225,17 @@ class FareCalculatorServiceTest {
 		fareCalculatorService.calculateFare(ticket);
 		assertEquals(((double) Math.round(Fare.BIKE_RATE_PER_HOUR * 0.95 * 100 ) / 100), ticket.getPrice());
 	}
+	
+	@Test
+	void givenCalculateFare_whenNoOutTime_thenReturnError() {
+		// GIVEN
+		LocalDateTime inTime = LocalDateTime.now().minusMinutes(60);
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.BIKE, false);
+		// WHEN
+		ticket.setInTime(inTime);
+		ticket.setParkingSpot(parkingSpot);
+		ticket.setIsRecurring(true);
+		// THEN
+		assertThrows(NullPointerException.class, () -> fareCalculatorService.calculateFare(ticket));
+	}
 }

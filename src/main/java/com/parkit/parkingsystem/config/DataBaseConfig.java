@@ -41,6 +41,10 @@ public class DataBaseConfig {
 		return connect;
 	}
 
+	public static void setPropertyFile(String propertyFile) {
+		DataBaseConfig.propertyFile = propertyFile;
+	}
+
 	public void closeConnection(Connection con) {
 		if (con != null) {
 			try {

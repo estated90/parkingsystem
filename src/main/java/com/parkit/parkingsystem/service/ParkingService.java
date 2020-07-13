@@ -29,7 +29,7 @@ public class ParkingService {
 		this.ticketDAO = ticketDAO;
 	}
 
-	public void processIncomingVehicle() {
+	public void processIncomingVehicle(){
 		try {
 			ParkingSpot parkingSpot = 		getNextParkingNumberIfAvailable();
 			LocalDateTime inTime = 			LocalDateTime.now();
@@ -55,8 +55,10 @@ public class ParkingService {
 				System.out.println("Generated Ticket and saved in DB");
 				System.out.println("Please park your vehicle in spot number:" + parkingSpot.getId());
 				System.out.println("Recorded in-time for vehicle number:" + vehicleRegNumber + " is:" + inTime);
+			}else {
+				throw new ParkinkFullException("Parking is full, please wait for someone to exit");
 			}
-		} catch (Exception e) {
+		} catch (ParkinkFullException | IOException e) {
 			logger.error("Unable to process incoming vehicle", e);
 		}
 	}
@@ -77,12 +79,9 @@ public class ParkingService {
 			} else {
 				throw new SQLException("Error fetching parking number from DB. Parking slots might be full");
 			}
-		} catch (IllegalArgumentException ie) {
-			logger.error("Error parsing user input for type of vehicle", ie);
-		} catch (SQLException e) {
-			logger.error("Error fetching next available parking slot", e);
-		} catch (ParkingSpotDAOException e) {
-			logger.error("The parking is full", e);
+		} catch (IllegalArgumentException | SQLException | ParkingSpotDAOException ie) {
+			logger.error("Error fetching next available parking slot", ie);
+
 		}
 		return parkingSpot;
 	}

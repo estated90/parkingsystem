@@ -7,11 +7,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class InteractiveShell {
-
-	private InteractiveShell() {
+/*
+	public InteractiveShell() {
 		throw new IllegalStateException("Utility class");
 	}
-
+*/
 	private static final Logger logger = LogManager.getLogger("InteractiveShell");
 
 	public static void loadInterface() {
@@ -29,7 +29,7 @@ public class InteractiveShell {
 			int option = inputReaderUtil.readSelection();
 			switch (option) {
 			case 1:
-				parkingService.processIncomingVehicle();
+					parkingService.processIncomingVehicle();
 				break;
 			case 2:
 				parkingService.processExitingVehicle();

@@ -4,11 +4,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
+import org.junit.Rule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.rules.ExpectedException;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -26,10 +29,14 @@ import com.parkit.parkingsystem.util.InputReaderUtil;
 class DataBaseConfigTest {
 
 	private java.sql.Connection con = null;
+	private java.sql.PreparedStatement ps = null;
 	private static DataBaseConfig dataBaseConfig = new DataBaseConfig();
     @Mock
 	private static InputReaderUtil inputReaderUtil;
 
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+    
 	@BeforeAll
 	private static void setUp() throws Exception {
         new DataBasePrepareService();
@@ -66,4 +73,18 @@ class DataBaseConfigTest {
 			con.prepareStatement(DBConstants.GET_NEXT_PARKING_SPOT);
 		});
 	}
+	
+	@Test
+	void testgetConnectionError () {
+		DataBaseConfig.setPropertyFile("\\src\\main\\resources\\config.propertie");
+		try {
+			dataBaseConfig.getConnection();
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        exception.expect(IOException.class);
+    	exception.expectMessage("The property file was not found");
+	}
+	
 }
