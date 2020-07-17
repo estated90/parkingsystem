@@ -110,19 +110,4 @@ class ParkingDataBaseIT {
 		}
 	}
 
-	@Test
-	@Order(3)
-	void givenTheUpdateToDB_whenUserEnterTheParking_thenNextAvailableSpotIsAvailable() throws ParkingSpotDAOException {
-		// GIVEN
-		ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
-		ParkingType parkingType = ParkingType.CAR;
-		int parkingNumber = 0;
-		int parkingNumberOrigin = 0;
-		parkingNumberOrigin = parkingSpotDAO.getNextAvailableSlot(parkingType);
-		parkingService.processIncomingVehicle();
-		// WHEN
-		parkingNumber = parkingSpotDAO.getNextAvailableSlot(parkingType);
-		// THEN
-		assertEquals(parkingNumberOrigin + 1, parkingNumber);
-	}
 }

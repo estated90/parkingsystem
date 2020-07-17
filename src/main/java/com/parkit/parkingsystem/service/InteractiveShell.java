@@ -7,11 +7,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class InteractiveShell {
-/*
-	public InteractiveShell() {
+
+	private InteractiveShell() {
 		throw new IllegalStateException("Utility class");
 	}
-*/
+	
 	private static final Logger logger = LogManager.getLogger("InteractiveShell");
 
 	public static void loadInterface() {

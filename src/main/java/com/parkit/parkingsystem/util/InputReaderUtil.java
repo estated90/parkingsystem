@@ -35,5 +35,9 @@ public class InputReaderUtil {
         }
     }
 
+	public void setScan(Scanner scan) {
+		this.scan = scan;
+	}
+
 
 }
