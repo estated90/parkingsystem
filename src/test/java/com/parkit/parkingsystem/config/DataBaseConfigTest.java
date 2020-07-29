@@ -2,8 +2,6 @@ package com.parkit.parkingsystem.config;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -18,9 +16,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.mockito.Mock;
 
 import com.parkit.parkingsystem.constants.DBConstants;
-import com.parkit.parkingsystem.dao.ParkingSpotDAO;
-import com.parkit.parkingsystem.dao.TicketDAO;
-import com.parkit.parkingsystem.integration.config.DataBaseTestConfig;
 import com.parkit.parkingsystem.integration.service.DataBasePrepareService;
 import com.parkit.parkingsystem.service.FareCalculatorService;
 import com.parkit.parkingsystem.util.InputReaderUtil;
@@ -29,7 +24,6 @@ import com.parkit.parkingsystem.util.InputReaderUtil;
 class DataBaseConfigTest {
 
 	private java.sql.Connection con = null;
-	private java.sql.PreparedStatement ps = null;
 	private static DataBaseConfig dataBaseConfig = new DataBaseConfig();
     @Mock
 	private static InputReaderUtil inputReaderUtil;
